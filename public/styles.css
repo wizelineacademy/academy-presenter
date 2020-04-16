@@ -1,0 +1,313 @@
+:root {
+    --primary-color-one: #E93D44;
+    --primary-color-two: #262E30;
+    --primary-color-three: #DDDDDD;
+
+    --secondary-color-one: #28B2BF;
+    --secondary-color-two: #00718C;
+
+    --tertiary-color-one: #902E57;
+    --tertiary-color-two: #F5B335;
+    --tertiary-color-three: #062A31;
+    --tertiary-color-four: #D6D1C4;
+
+    --yellow: var(--tertiary-color-two, red);
+
+    font-size: 16px;
+}
+
+@font-face {
+    font-family: 'Proxima Nova';
+    font-weight: 400;
+    src: url("/assets/fonts/ProximaNova-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: 'Proxima Nova';
+    font-weight: bold;
+    src: url("/assets/fonts/ProximaNova-Bold.otf") format("opentype");
+}
+
+#__next {
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: "Proxima Nova", sans-serif;
+    overflow: auto;
+}
+
+.wizeline-background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* [START] Define slide backgrounds */
+html.title-option-two body {
+    background: url('/assets/bg1.png') no-repeat 100%;
+    background-size: contain;
+}
+
+html.test body {
+    background: url('/assets/bg1.png') no-repeat 100%;
+    background-size: contain;
+}
+
+html.title-slide-option-one body {
+    background: url('/assets/bg1.png') no-repeat 100%;
+    background-size: contain;
+}
+
+.bar {
+    width: 25px;
+    flex-grow: 1;
+}
+
+.bg-tricolor {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.academy-info {
+    flex-direction: column;
+}
+
+.academy-info-item {
+    height: 33%;
+    position: relative;
+}
+
+.academy-logo {
+    background: url("/assets/logo.png") no-repeat center;
+    width: 120px;
+    height: 33%;
+    background-size: contain;
+    transform: rotate(-90deg);
+}
+
+.magenta {
+    background-color: var(--tertiary-color-one, pink);
+}
+
+.text-magenta {
+    color: var(--tertiary-color-one, pink);
+}
+
+.yellow {
+    background-color: var(--tertiary-color-two, yellow);
+}
+
+.text-yellow {
+    color: var(--tertiary-color-two, yellow);
+}
+
+.blue {
+    background-color: var(--secondary-color-one, blue);
+}
+
+.text-blue {
+    color: var(--secondary-color-one, blue);
+}
+
+.rotate-90 {
+    transform: rotate(-90deg);
+    position: absolute;
+    top: 80%;
+    left: 46px;
+    transform-origin: 0 0;
+}
+
+html.agenda .bg-tricolor {
+    display: flex;
+}
+/* [END] Define slide backgrounds */
+
+/* GrapeJS styles */
+/* Let's highlight canvas boundaries */
+.slides-editor .gjs-one-bg {
+    background-color: var(--primary-color-two, pink);
+}
+
+.slides-editor .gjs-two-color {
+    color: white;
+}
+
+#gjs {
+    border: none;
+    color: white;
+}
+
+/* Reset some default styling */
+.gjs-cv-canvas {
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.gjs-block {
+    width: auto;
+    height: auto;
+    min-height: auto;
+}
+
+.slides-editor{
+    height: calc(100vh - 350px);
+}
+
+.panel__basic-actions {
+    position: initial;
+}
+
+.editor-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    height: 300px;
+}
+
+.editor-canvas {
+    flex-grow: 1;
+}
+
+.panel__right {
+    flex-basis: 230px;
+    position: relative;
+    overflow-y: auto;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.flex-columns {
+    flex-direction: column;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.w-50 {
+    width: 50%;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Reveal overwrite */
+.divider {
+    background: var(--tertiary-color-two, yellow);
+    height: 10px;
+    width: 100%;
+}
+
+#wz-slides h1,
+#wz-slides h2,
+#wz-slides h3,
+#wz-slides h4,
+#wz-slides h5,
+#wz-slides h6 {
+    text-transform: capitalize;
+    font-family: "Proxima Nova", sans-serif;
+}
+
+#wz-slides .title-slide-option-one h1 {
+    text-transform: capitalize;
+    margin-top: 100px;
+    font-size: 42px;
+    text-align: left;
+    font-weight: bold;
+}
+
+#wz-slides .title-slide-option-one h3 {
+    text-transform: capitalize;
+    margin-top: 2%;
+    font-size: 15px;
+    text-align: left;
+}
+
+.agenda_topic {
+    border-bottom: 5px solid #BCBCBC;
+    margin-bottom: 1rem;
+}
+
+.agenda_topic p{
+    font-size: 1rem;
+}
+
+pre code {
+    font-size: 0.875rem;
+    line-height: 1.3;
+}
+
+.sandbox_preview {
+    background: black;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.sandbox_preview .button {
+
+}
+
+.video-background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+}
+
+.logo {
+    height: auto;
+    max-width: 100%;
+    background: var(--primary-color-one, red);
+    padding: 20px;
+}
+
+.hero.is-logo,
+.is-logo {
+    background: var(--primary-color-one, red);
+    color: #ffffff;
+}
+
+.is-logo:hover {
+    color: #ffffff;
+}
+
+.hero.is-lesson,
+.is-lesson {
+    background: var(--secondary-color-two, yellow);
+    color: #fff;
+    cursor: pointer;
+}
+
+.is-past-lesson {
+    background: var(--tertiary-color-two, yellow);
+    color: #fff;
+    cursor: not-allowed;
+}
+
+.is-lesson:hover {
+    background: var(--secondary-color-one, yellow);
+}
