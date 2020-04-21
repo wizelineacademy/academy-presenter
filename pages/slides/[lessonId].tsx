@@ -16,22 +16,6 @@ import {FindLesson} from "../../states/lessons/lessons.machine.events";
 
 const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
 
-const anotherDemoCode = `var joe = {
-  drinkCoffee: function (paper) {
-    console.log('Just read' + paper);
-  },
-  sundayPreNap: function (monthly) {
-    console.log('About to fall asleep reading this' + monthly)
-  }
-}
-
-paper.subscribe(joe.drinkCoffee);
-paper.subscribe(joe.sundayPreNap, 'monthly');
-
-paper.daily();
-paper.daily();
-paper.monthly();`;
-
 export default function () {
     const router = useRouter()
     const {lessonId} = router.query;
@@ -62,11 +46,12 @@ export default function () {
                 <Layout>
                     <TitleSlideOptionOne title={lesson && lesson.name} author={lesson && lesson.speaker}/>
                     <Agenda topics={topics}/>
-                    <TitleSlideOptionTwo code={anotherDemoCode} title="Subscriber pattern"/>
                     <TitleSlideOptionTwo />
-                    <ContentSlide>
-                        <Sandbox src="https://codesandbox.io/embed/indeterminate-checkbox-state-uexld?fontsize=14&hidenavigation=1&theme=dark&view=preview"/>
-                    </ContentSlide>
+                    {topics.map(topic=> (
+                        <ContentSlide title={topic.title}>
+                            <Sandbox src="https://codesandbox.io/embed/indeterminate-checkbox-state-uexld?fontsize=14&hidenavigation=1&theme=dark&view=preview"/>
+                        </ContentSlide>
+                    ))}
                 </Layout>
             </ShowIf>
         </>

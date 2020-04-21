@@ -93,7 +93,10 @@ export const LessonList = (props: LessonListProps) => {
                 <div className="column is-one-quarter">
                     <aside className="menu">
                         <p className="menu-label">
-                            Lessons <button onClick={onAddLesson} className="button is-small is-pulled-right is-primary"><span>+</span></button>
+                            Lessons
+                            <ShowIf condition={preview}>
+                                <button onClick={onAddLesson} className="button is-small is-pulled-right is-primary"><span>+</span></button>
+                            </ShowIf>
                         </p>
                         <ul className="menu-list">
                             {lessons.map((lesson: Lesson, idx) => (
@@ -121,9 +124,6 @@ export const LessonList = (props: LessonListProps) => {
                         <ShowIf condition={!preview}>
                             <Link href={slideULR()}>
                                 <button className="button is-success is-light">Start Presentation</button>
-                            </Link>
-                            <Link href={lessonURL()}>
-                                <button className="button is-info is-light is-pulled-right">Start Lesson</button>
                             </Link>
                         </ShowIf>
                         <ShowIf condition={preview}>
