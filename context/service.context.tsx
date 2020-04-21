@@ -9,9 +9,21 @@ const coursesService = new CoursesService(firebaseClient);
 const lessonsService = new LessonsService(firebaseClient);
 const topicsService = new TopicsService(firebaseClient);
 
-export const ServiceContext = createContext({
+const services = {
     firebaseClient,
     coursesService,
     lessonsService,
     topicsService,
-});
+}
+
+// TODO - This should be an empty object
+export const ServiceContext = createContext(services);
+
+export const ServicesProvider = ({children}) => {
+    return (
+        <ServiceContext.Provider value={services}>
+            {children}
+        </ServiceContext.Provider>
+    );
+}
+

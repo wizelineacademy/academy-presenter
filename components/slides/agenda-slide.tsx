@@ -1,12 +1,13 @@
-import {AgendaProps, Topic} from "../../domain/agenda";
+import {AgendaProps} from "../../domain/agenda";
 import {FunctionComponent} from "react";
+import {Topic} from "../../domain/topic";
 
 const exampleName = 'Topic One';
 const exampleDescription = 'Description: Max of characters should be the bottom of this box';
 
-const AgendaTopic = ({name = exampleName, description = exampleDescription}: Topic) => (
+const AgendaTopic = ({title = exampleName, description = exampleDescription}: any) => (
     <div className="agenda_topic">
-        <h6>{name}</h6>
+        <h6>{title}</h6>
         <p>{description}</p>
     </div>
 );
@@ -19,7 +20,7 @@ export const Agenda: FunctionComponent<AgendaProps> = ({title = 'Agenda', topics
                     <h4 className="text-magenta text-left">{title}</h4>
                 </div>
                 <div className="w-50 text-right">
-                    {topics.map(topic => <AgendaTopic key={`${name}`} name={topic.name} description={topic.description}/>)}
+                    {topics.map((topic: Topic) => <AgendaTopic key={`${name}`} title={topic.title} description={topic.description}/>)}
                 </div>
             </div>
         </section>

@@ -1,12 +1,4 @@
-// TODO - Remove this reference - see domain/topic.tsx
-export class Topic {
-    name: string;
-    description: string;
-}
-
-export class TopicListProps {
-    topics: Topic[];
-}
+import {Topic} from "./topic";
 
 export class AgendaProps {
     title?: string;

@@ -36,16 +36,6 @@ export default function () {
         }
     };
 
-    const saveTopic = () => {
-        service.save({
-            id: 'creating_nodes',
-            position: 1,
-            name: 'Creating Nodes',
-            description: `Cras fermentum odio eu feugiat. Sit amet commodo nulla facilisi nullam. Nec feugiat nisl pretium fusce id velit. Fermentum et sollicitudin ac orci phasellus egestas tellus. Pharetra vel turpis nunc eget lorem dolor sed viverra ipsum. Pretium fusce id velit ut tortor pretium viverra suspendisse. Congue eu consequat ac felis donec et odio pellentesque diam. Sed turpis tincidunt id aliquet risus feugiat in. Hac habitasse platea dictumst quisque. Urna et pharetra pharetra massa. Nulla facilisi cras fermentum odio eu. Sed risus pretium quam vulputate dignissim. Elementum curabitur vitae nunc sed.`,
-            lessonId: 'the_dom',
-        });
-    };
-
     return (
         <Layout>
             <button className="button" onClick={() => history.back()}>Go back</button>
@@ -62,7 +52,7 @@ export default function () {
                             <button className="button is-logo">Start presentation</button>
                         </Link>
 
-                        <button onClick={saveTopic} className="button">Share presentation</button>
+                        <button disabled className="button">Share presentation</button>
                     </div>
                 </div>
             </section>
@@ -79,7 +69,7 @@ export default function () {
                             <ul className="menu-list">
                                 {topics.map((topic: Topic) => (
                                     <li key={topic.id} onClick={() => selectTopic(topic)}>
-                                        <a className={cx({'is-active': isActive(topic)})}>{topic.name}</a>
+                                        <a className={cx({'is-active': isActive(topic)})}>{topic.title}</a>
                                     </li>
                                 ))}
                             </ul>
@@ -87,7 +77,7 @@ export default function () {
                     </div>
                     <div className="column">
                         <ShowIf condition={selectedTopic}>
-                            <h2 className="is-size-2">{selectedTopic && selectedTopic.name}</h2>
+                            <h2 className="is-size-2">{selectedTopic && selectedTopic.title}</h2>
                             <h4 className="is-size-4">Summary</h4>
                             <p>
                                 {selectedTopic && selectedTopic.description}

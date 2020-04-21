@@ -5,6 +5,14 @@ import {TitleSlideOptionTwo} from '../../components/slides/title-slide-option-2'
 import {ContentSlide} from "../../components/slides/content-slide";
 import {Agenda} from "../../components/slides/agenda-slide";
 import {Sandbox} from "../../components/sandbox";
+import {useRouter} from "next/router";
+import {FindTopics} from "../../states/topics/topics.machine.events";
+import {ShowIf} from "../../components/show-if";
+import {useTopics} from "../../states/topics/topics.machine.service";
+import {Loader} from "../../components/loader";
+import {Topic} from "../../domain/topic";
+import {useLessons} from "../../states/lessons/lessons.machine.service";
+import {FindLesson} from "../../states/lessons/lessons.machine.events";
 
 const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
 
@@ -24,28 +32,49 @@ paper.daily();
 paper.daily();
 paper.monthly();`;
 
-const topics = [
-    {name: 'Definition', description: 'What is the Document Object Model'},
-    {name: 'How is build', description: 'Description about how to browser creates the DOM'},
-    {name: 'What we can do with the DOM', description: 'Examples of what we can achieve by using the DOM'},
-    {name: 'Exercises', description: "Let's practice with real code"},
-    {name: 'Q&A', description: 'Question and answers session'},
-];
-
 export default function () {
-    useEffect(() => {
-        // Planning to load some configuration or slides definition
-    });
+    const router = useRouter()
+    const {lessonId} = router.query;
+    const [topicState, sendTopic] = useTopics();
+    const [lessonsState, sendLesson] = useLessons();
+    const isLoading = topicState.matches('fetching');
+    const isCourseLoading = lessonsState.matches('finding');
+    const topics: Topic[] = topicState.context.items;
+    const {currentItem: lesson} = lessonsState.context;
 
+    const fetchTopics = () => {
+        if (lessonId) {
+            sendTopic(new FindTopics(lessonId as string))
+        }
+    }
+
+    const fetchLesson = () => {
+        if (lessonId) {
+            sendLesson(new FindLesson(lessonId as string));
+        }
+    }
+
+    useEffect(fetchTopics, [lessonId]);
+    useEffect(fetchLesson, [lessonId]);
+
+    // First two elements inside the Layout (Slide) are required
+    // The first one is the title of the presentation
+    // The second component is the agenda
+    // The rest of the elements are going to be generated based on the topics content and slide type selection
     return (
-        <Layout>
-            <TitleSlideOptionOne title={"The DOM - Document Object Model"} author="Jorge Garcia M."/>
-            <Agenda topics={topics}/>
-            <TitleSlideOptionTwo code={anotherDemoCode} title="Subscriber pattern"/>
-            <TitleSlideOptionTwo />
-            <ContentSlide>
-                <Sandbox src="https://codesandbox.io/embed/indeterminate-checkbox-state-uexld?fontsize=14&hidenavigation=1&theme=dark&view=preview"/>
-            </ContentSlide>
-        </Layout>
+        <>
+            <Loader isLoading={isLoading || isCourseLoading} />
+            <ShowIf condition={!isLoading && !isCourseLoading}>
+                <Layout>
+                    <TitleSlideOptionOne title={lesson && lesson.name} author={lesson && lesson.speaker}/>
+                    <Agenda topics={topics}/>
+                    <TitleSlideOptionTwo code={anotherDemoCode} title="Subscriber pattern"/>
+                    <TitleSlideOptionTwo />
+                    <ContentSlide>
+                        <Sandbox src="https://codesandbox.io/embed/indeterminate-checkbox-state-uexld?fontsize=14&hidenavigation=1&theme=dark&view=preview"/>
+                    </ContentSlide>
+                </Layout>
+            </ShowIf>
+        </>
     );
 }
