@@ -42,20 +42,14 @@ export default function () {
     const topics: Topic[] = topicState.context.items;
     const {currentItem: lesson} = lessonsState.context;
 
-    const fetchTopics = () => {
+    const fetchContent = () => {
         if (lessonId) {
             sendTopic(new FindTopics(lessonId as string))
-        }
-    }
-
-    const fetchLesson = () => {
-        if (lessonId) {
             sendLesson(new FindLesson(lessonId as string));
         }
     }
 
-    useEffect(fetchTopics, [lessonId]);
-    useEffect(fetchLesson, [lessonId]);
+    useEffect(fetchContent, [lessonId]);
 
     // First two elements inside the Layout (Slide) are required
     // The first one is the title of the presentation
