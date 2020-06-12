@@ -15,6 +15,21 @@ export class FetchCoursesFail {
     constructor(public error: string) {}
 }
 
+export class FetchUserCourses {
+    readonly type = 'FETCH_USER_COURSES';
+    constructor(public userId: string) {}
+}
+
+export class FetchUserCoursesSuccess {
+    readonly type = 'FETCH_USER_COURSES_SUCCESS';
+    constructor(public courses: Course[]) {}
+}
+
+export class FetchUserCoursesFail {
+    readonly type = 'FETCH_USER_COURSES_FAIL';
+    constructor(public error: string) {}
+}
+
 export class SaveCourse {
     readonly type = 'SAVE_COURSE';
     constructor(public course: Course) {}
@@ -53,4 +68,7 @@ export type CoursesMachineEvents = FetchCourses
     | SaveCourseFail
     | FindCourse
     | FindCourseSuccess
-    | FindCourseFail;
+    | FindCourseFail
+    | FetchUserCourses
+    | FetchUserCoursesSuccess
+    | FetchUserCoursesFail;

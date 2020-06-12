@@ -4,7 +4,7 @@ import {CoursesContext, CoursesStateSchema} from "./courses.machine.schema";
 import {
     CoursesMachineEvents,
     FetchCoursesFail,
-    FetchCoursesSuccess, FindCourseFail, FindCourseSuccess,
+    FetchCoursesSuccess, FetchUserCoursesFail, FetchUserCoursesSuccess, FindCourseFail, FindCourseSuccess,
     SaveCourseFail,
     SaveCourseSuccess
 } from "./courses.machine.events";
@@ -29,6 +29,16 @@ export const useCourses = () => {
                     }),
                     catchError(e => of(new FetchCoursesFail(e)))
                 );
+            },
+            getAllByUser: (_, event) => {
+                return coursesService.getAllFromUser(event.userId).pipe(
+                    take(1),
+                    map((snapshot) => {
+                        const courses: Course[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
+                        return new FetchUserCoursesSuccess(courses);
+                    }),
+                    catchError(e => of(new FetchUserCoursesFail(e)))
+            );
             },
             save: (_, event) => {
                 return coursesService.save(event.course).pipe(

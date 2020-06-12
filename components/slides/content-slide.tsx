@@ -1,10 +1,10 @@
 const RenderIf = ({condition, children}) => condition ? children : null;
 
-export const ContentSlide = ({ title = 'DOM', children}) => {
+export const ContentSlide = ({ title = 'DOM', variant = 1, children}) => {
     return (
-        <section data-state="test2" className="content-slide flex">
+        <section data-state={`content-variant-${variant}`} className="content-slide flex">
             <RenderIf condition={title}>
-                <h4>{title}</h4>
+                <h4 className="has-text-left slide-title">{title}</h4>
             </RenderIf>
             {children}
         </section>

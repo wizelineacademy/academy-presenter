@@ -1,7 +1,8 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import cx from 'classnames';
 import Link from 'next/link';
 import {ShowIf} from "./show-if";
+import {ServiceContext} from "../context/service.context";
 
 type NavbarProps = {
     isAdmin?: boolean;
@@ -9,6 +10,7 @@ type NavbarProps = {
 
 export const Navbar = ({isAdmin}: NavbarProps) => {
     const [isActive, setActive] = useState(false);
+    const {userSession: user} = useContext(ServiceContext);
     const toggleMenu = () => setActive(!isActive);
 
     const hamburgerMenuClasses = cx('navbar-burger burger', {'is-active': isActive});
@@ -34,7 +36,7 @@ export const Navbar = ({isAdmin}: NavbarProps) => {
             </div>
 
             <div id="navigation-menu" className="navbar-menu">
-                <ShowIf condition={isAdmin}>
+                <ShowIf condition={user.isLoggedIn && isAdmin}>
                     <div className="navbar-start">
                         <Link href="/dashboard">
                             <a className="navbar-item">
@@ -43,18 +45,39 @@ export const Navbar = ({isAdmin}: NavbarProps) => {
                         </Link>
                     </div>
                 </ShowIf>
-                <div className="navbar-end is-hidden">
-                    <div className="navbar-item">
-                        <div className="buttons">
-                            <a className="button is-primary">
-                                <strong>Sign up</strong>
-                            </a>
-                            <a className="button is-light">
-                                Log in
-                            </a>
+                {!user.isLoggedIn && (
+                    <div className="navbar-end">
+                        <div className="navbar-item">
+                            <div className="buttons">
+                                <Link href="/login">
+                                    <a className="button is-primary">
+                                        Log in
+                                    </a>
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
+
+                {user.isLoggedIn && (
+                    <div className="navbar-end">
+                        <div className="navbar-item">
+                            <figure className="image is-32x32">
+                                <img className="is-rounded" src={user.current.photoURL} />
+                            </figure>
+                            <div className="box is-shadowless">
+                                {user.current.displayName}
+                            </div>
+                        </div>
+                        <div className="navbar-item">
+                            <Link href="/logout">
+                                <a className="is-link">
+                                    Log out
+                                </a>
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </div>
         </nav>
     );

@@ -17,7 +17,7 @@ export const Agenda: FunctionComponent<AgendaProps> = ({title = 'Agenda', topics
         <section data-state="agenda" className="content-slide">
             <div className="flex align-items-center">
                 <div className="flex-grow-1">
-                    <h4 className="text-magenta text-left">{title}</h4>
+                    <h4 className="slide-title text-left is-size-1">{title}</h4>
                 </div>
                 <div className="w-50 text-right">
                     {topics.map((topic: Topic) => <AgendaTopic key={`${name}`} title={topic.title} description={topic.description}/>)}

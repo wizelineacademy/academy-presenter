@@ -47,7 +47,7 @@ export default function () {
             <Loader isLoading={isLoading} />
 
             <ShowIf condition={!isLoading}>
-                <LessonList lessons={lessons} courseId={courseId as string} topics={topics}/>
+                <LessonList lessons={lessons} courseId={courseId as string} topics={topics} blocks={[]}/>
             </ShowIf>
 
         </Layout>

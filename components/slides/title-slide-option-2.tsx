@@ -1,19 +1,4 @@
-const myCode = `import React, { useState } from 'react';
-
-function Example() {
-    const [count, setCount] = useState(0);
-
-    return (
-        <div>
-            <p>You clicked {count} times</p>
-            <button onClick={() => setCount(count + 1)}>
-                Click me
-            </button>
-        </div>
-    );
-}`;
-
-export const TitleSlideOptionTwo = ({code = myCode, title = "This is an example"}) => {
+export const TitleSlideOptionTwo = ({code = 'Hello world!', title = ""}) => {
     return (
         <section data-state="title-option-two">
             <h4>{title}</h4>

@@ -1,4 +1,4 @@
-import {forwardRef} from "react";
+import React, {forwardRef} from "react";
 import cx from 'classnames';
 import {DeleteLesson} from "../../states/lessons/lessons.machine.events";
 import {useModal} from "../../states/modal/modal.machine.service";

@@ -18,7 +18,7 @@ export default ({children}) => {
         <>
             <StripesBackground />
             <div className="reveal">
-                <div className="wizeline-backgrounds"></div>
+                <div className="wizeline-background"></div>
                 <div className="slides" ref={slidesEl}>{children}</div>
             </div>
         </>

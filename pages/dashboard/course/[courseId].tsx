@@ -12,17 +12,21 @@ import {useCourses} from "../../../states/courses/courses.machine.service";
 import {FindCourse} from "../../../states/courses/courses.machine.events";
 import {useTopics} from "../../../states/topics/topics.machine.service";
 import {FetchTopics} from "../../../states/topics/topics.machine.events";
+import {useContent} from "../../../states/content/content.machine.service";
+import {FetchContent} from "../../../states/content/content.machine.events";
 
 export default () => {
     const router = useRouter();
     const [lessonsState, send] = useLessons();
     const [coursesState, sendCourse] = useCourses();
     const [topicsState, sendTopic] = useTopics();
+    const [contentState, sendContent] = useContent();
     const lessonModalRef = useRef(null);
     const isLoading = lessonsState.matches('fetching');
     const {items: lessons} = lessonsState.context;
     const {currentItem: course} = coursesState.context;
     const {items: topics} = topicsState.context;
+    const {items: blocks} = contentState.context;
     const {courseId} = router.query;
 
     const openLessonModal = () => {
@@ -33,6 +37,7 @@ export default () => {
         courseId && send(new FetchLessons(courseId as string));
         courseId && sendCourse(new FindCourse(courseId as string));
         courseId && sendTopic(new FetchTopics(courseId as string));
+        courseId && sendContent(new FetchContent(courseId as string));
     }, [courseId]);
 
     useEffect(() => {
@@ -71,12 +76,14 @@ export default () => {
                     courseId={course ? course.id : null}
                     lessons={lessons}
                     topics={topics}
+                    blocks={blocks}
                     isAdmin
                     state={lessonsState}
                     send={send}
                     sendTopic={sendTopic}
                     preview={true}
                     onAddLesson={openLessonModal}
+                    sendContent={sendContent}
                 />
             </ShowIf>
 

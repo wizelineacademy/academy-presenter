@@ -7,8 +7,17 @@ export class CoursesService implements ServiceInterface {
 
     constructor(private client: FirebaseClient) {}
 
+    // TODO - get curate content only, rename method here
     getAll(): Observable<any> {
         return from(this.client.database.ref('courses').once('value'));
+    }
+
+    getAllFromUser(userId: string): Observable<any> {
+        return from(this.client.database.ref('courses')
+            .orderByChild('userId')
+            .equalTo(userId)
+            .once('value')
+        );
     }
 
     save(course: Course): Observable<any> {

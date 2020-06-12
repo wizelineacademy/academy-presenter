@@ -13,6 +13,7 @@ export const coursesMachineConfig: MachineConfig<CoursesContext, CoursesStateSch
         initial: {
             on: {
                 FETCH_COURSES: 'fetching',
+                FETCH_USER_COURSES: 'fetchingByUser',
                 SAVE_COURSE: 'saving',
                 FIND_COURSE: 'finding',
             }
@@ -23,6 +24,17 @@ export const coursesMachineConfig: MachineConfig<CoursesContext, CoursesStateSch
             },
             on: {
                 FETCH_COURSES_SUCCESS: {
+                    target: 'initial',
+                    actions: 'updateList'
+                }
+            }
+        },
+        fetchingByUser: {
+            invoke: {
+                src: 'getAllByUser'
+            },
+            on: {
+                FETCH_USER_COURSES_SUCCESS: {
                     target: 'initial',
                     actions: 'updateList'
                 }
