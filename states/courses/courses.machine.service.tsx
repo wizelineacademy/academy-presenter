@@ -23,7 +23,7 @@ export const useCourses = () => {
             getAll: (_, event) => {
                 return coursesService.getAll().pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const courses: Course[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchCoursesSuccess(courses);
                     }),
@@ -33,7 +33,7 @@ export const useCourses = () => {
             getAllByUser: (_, event) => {
                 return coursesService.getAllFromUser(event.userId).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const courses: Course[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchUserCoursesSuccess(courses);
                     }),
@@ -48,7 +48,7 @@ export const useCourses = () => {
             },
             find: (_, event) => {
                 return coursesService.find(event.courseId).pipe(
-                    map((snapshot) => new FindCourseSuccess(snapshot.val())),
+                    map((snapshot: firebase.database.DataSnapshot) => new FindCourseSuccess(snapshot.val())),
                     catchError(e => of(new FindCourseFail(e)))
                 );
             }

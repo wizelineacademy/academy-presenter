@@ -4,6 +4,13 @@ import {BlockContent} from "../domain/content";
 import classnames from 'classnames';
 import {DeleteContent, SaveContent, UpdateContent} from "../states/content/content.machine.events";
 import {Code} from "./code";
+import {Button} from './Button/Button';
+import {TextArea} from './TextArea/TextArea';
+import {TextField} from './TextField/TextField';
+import IosDesktop from 'react-ionicons/lib/IosDesktop';
+import IosDesktopOutline from 'react-ionicons/lib/IosDesktopOutline';
+import IosTrashOutline from 'react-ionicons/lib/IosTrashOutline';
+import IosCreateOutline from 'react-ionicons/lib/IosCreateOutline';
 
 const isNew = (block: BlockContent): boolean => !Boolean(block.id);
 const isText = (block: BlockContent): boolean => block.type === 'text';
@@ -22,7 +29,7 @@ const getDefaultBlockContent = (courseId: string, topicId) => ({
     topicId,
 })
 
-export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendContent}) => {
+export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendContent, isAdmin}) => {
     const [currentBlock, setCurrentBlock] = useState(getDefaultBlockContent(courseId as string, topic.id));
     const changeToWrite = (block) => setCurrentBlock({...block, edit: true});
     const content = [];
@@ -99,38 +106,47 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
 
     const getNormalControls = (block: BlockContent) => {
         return (
-            <div className="field has-addons is-pulled-right border-1 content__controls-normal">
-                <p className="control">
-                    <button className="button is-outlined is-small is-danger" onClick={() => deleteContent(block.id)}>Delete</button>
-                </p>
-                <p className="control">
-                    <button disabled={currentBlock.id === block.id && currentBlock.edit} onClick={() => changeToWrite(block)} className="button is-info is-outlined is-small">Edit</button>
-                </p>
-            </div>
+            <>
+                <div className="absolute left-0 top-0 right-0 flex justify-end bg-transparent hover:opacity-0">
+                    <Button>
+                        {block.isSlideBlock ? <IosDesktop color="purple"/> : <IosDesktopOutline />}
+                    </Button>
+                </div>
+                <div className="absolute left-0 top-0 right-0 flex justify-end bg-transparent bg-opacity-75 opacity-0 hover:opacity-100">
+                    <Button
+                        className="mr-2"
+                        onClick={() => deleteContent(block.id)}><IosTrashOutline /></Button>
+                    <Button
+                        className="mr-2"
+                        disabled={currentBlock.id === block.id && currentBlock.edit}
+                        onClick={() => changeToWrite(block)}>
+                        <IosCreateOutline />
+                    </Button>
+                    <Button>
+                        {block.isSlideBlock ? <IosDesktop color="purple"/> : <IosDesktopOutline />}
+                    </Button>
+                </div>
+            </>
         );
     }
 
     const getEditionControls = (block: BlockContent) => {
         return (
             <>
-                <div className="field has-addons is-pulled-right border-1">
-                    <p className="control">
-                        <button
-                            onClick={cancelEditing}
-                            className="button is-info is-outlined is-small">
-                            Cancel
-                        </button>
-                    </p>
-                    <p className="control">
-                        <button
-                            disabled={block.id !== currentBlock.id && !currentBlock.edit}
-                            onClick={saveOrUpdate}
-                            className="button is-outlined is-small is-info">
-                            Save
-                        </button>
-                    </p>
+                <div className="flex items-center justify-end">
+                    <Button
+                        variant="danger"
+                        className="mr-2"
+                        onClick={cancelEditing}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="primary"
+                        disabled={block.id !== currentBlock.id && !currentBlock.edit}
+                        onClick={saveOrUpdate}>
+                        Save
+                    </Button>
                 </div>
-                <div className="is-clearfix" />
             </>
         )
     }
@@ -165,23 +181,23 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
     blocks.forEach((block: BlockContent, index) => {
         content.push(
             <div key={`block-${index}`} className="content__wrapper">
-                <div className="content">
+                <div className="relative">
                     {isNew(block) && (
                         <div className="content-block content">
                             <div className="box">
                                 <div className="buttons is-centered">
-                                    <button
-                                        className="button"
+                                    <Button
+                                        className="mr-2"
                                         onClick={() => updateCurrentBlockType('code')}
                                     >
                                         Code
-                                    </button>
-                                    <button
-                                        className="button"
+                                    </Button>
+                                    <Button
+                                        className="mr-2"
                                         onClick={() => updateCurrentBlockType('text')}
                                     >
                                         Text
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +219,7 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
                         <div className="content-block content">
                             <div className="box">
                                 {getIsSlideControl()}
-                                <textarea
+                                <TextArea
                                     name="content"
                                     cols={30}
                                     rows={10}
@@ -218,9 +234,7 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
                     {isEmbedEditMode(block) && (
                         <>
                             {getIsSlideControl()}
-                            <input
-                                className="input"
-                                type="text"
+                            <TextField
                                 defaultValue={block.content}
                                 onChange={(evt) => updateCurrentBlockContent(evt.target.value)}/>
                             <br/>
@@ -230,28 +244,26 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
                     )}
 
                     {isTextNormalMode(block) && (
-                        <div className="is-relative">
+                        <>
                             {getNormalControls(block)}
-                            <div className={classnames('content', {'is-slide-block': block.isSlideBlock})} dangerouslySetInnerHTML={{__html: block.content}} />
+                            <div className="text-gray-600" dangerouslySetInnerHTML={{__html: block.content}} />
                             <br/>
-                        </div>
+                        </>
                     )}
 
                     {isCodeNormalMode(block) && (
-                        <div className="is-relative">
+                        <>
                             {getNormalControls(block)}
-                            <Code isSlideBlock={block.isSlideBlock} content={block.content} />
+                            <Code content={block.content} />
                             <br/>
-                        </div>
+                        </>
                     )}
 
                     {isEmbedNormalMode(block) && (
                         <>
-                        <div className={classnames("is-relative", {'is-slide-block': block.isSlideBlock})}>
                             {getNormalControls(block)}
                             <embed className="code__embed" src={block.content} />
-                        </div>
-                        <br/>
+                            <br/>
                         </>
                     )}
                 </div>
@@ -262,67 +274,70 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
     if (blocks.length === content.length) {
         content.push(
             <>
-                {currentBlock.type === null && (
-                    <div className="content-block content">
-                        <div className="box">
-                            <div className="buttons is-centered">
-                                <button
-                                    className="button"
-                                    onClick={() => updateCurrentBlockType('code')}
-                                >
-                                    Code
-                                </button>
-                                <button
-                                    className="button"
-                                    onClick={() => updateCurrentBlockType('text')}
-                                >
-                                    Text
-                                </button>
-                                <button
-                                    className="button"
-                                    onClick={() => updateCurrentBlockType('embed')}
-                                >
-                                    Embed URL
-                                </button>
-                            </div>
+                {isAdmin && currentBlock.type === null && (
+                    <div className="rounded">
+                        <div className="flex items-center justify-center p-3">
+                            <Button
+                                className="mr-2"
+                                onClick={() => updateCurrentBlockType('code')}
+                            >
+                                Code
+                            </Button>
+                            <Button
+                                className="mr-2"
+                                onClick={() => updateCurrentBlockType('text')}
+                            >
+                                Text
+                            </Button>
+                            <Button
+                                className="button"
+                                onClick={() => updateCurrentBlockType('embed')}
+                            >
+                                Embed URL
+                            </Button>
                         </div>
                     </div>
                 )}
-                {isNew(currentBlock) && currentBlock.type && (
-                    <div className="content-block content">
+                {isAdmin && isNew(currentBlock) && currentBlock.type && (
+                    <div className="px-3">
                         <div className="box">
                             <label className="checkbox">
-                                <input type="checkbox" name="slide-block" onChange={(evt) => markAsSlideBlock(evt.target.checked)}/>
+                                <input
+                                    type="checkbox"
+                                    name="slide-block"
+                                    onChange={(evt) => markAsSlideBlock(evt.target.checked)}
+                                />
                                 Slide Block
                             </label>
                             <br/>
+
                             {isText(currentBlock) && <Editor onChange={updateCurrentBlockContent} content={currentBlock.content} />}
                             {isCode(currentBlock) && (
-                                <textarea
+                                <TextArea
                                     name="content"
-                                    cols={30}
+                                    cols={100}
                                     rows={10}
-                                    className="code"
+                                    className="w-full overflow-auto"
                                     onChange={(evt) => updateCurrentBlockContent(evt.target.value)} />
                             )}
                             {isEmbed(currentBlock) && (
-                                <input
-                                    className="input"
-                                    type="text"
-                                    onChange={(evt) => updateCurrentBlockContent(evt.target.value)}/>
+                                <TextField
+                                    onChange={(evt) => updateCurrentBlockContent(evt.target.value)}
+                                    placeholder="https://codesandbox.io/embed/jointjs-dom-graph-ykf1l?fontsize=14&hidenavigation=1&theme=dark&view=preview"
+                                />
                             )}
                             <br/>
-                            <div className="field has-addons is-pulled-right border-1">
-                                <p className="control">
-                                    <button
-                                        onClick={cancelEditing}
-                                        className="button is-info is-outlined is-small">
-                                        Cancel
-                                    </button>
-                                </p>
-                                <p className="control">
-                                    <button onClick={saveOrUpdate} className="button is-outlined is-small is-info">Save</button>
-                                </p>
+                            <div className="flex items-center justify-end mx-3">
+                                <Button
+                                    onClick={cancelEditing}
+                                    className="mr-2">
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={saveOrUpdate}
+                                    variant="primary">
+                                    Save
+                                </Button>
                             </div>
                             <div className="is-clearfix" />
                         </div>
@@ -332,7 +347,11 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
         )
     }
 
-    return (<>{content}</>);
+    return (
+        <>
+            {content}
+        </>
+    );
 }
 
 export default ContentEditor;

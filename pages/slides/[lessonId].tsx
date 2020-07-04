@@ -16,8 +16,8 @@ import {FindLesson} from "../../states/lessons/lessons.machine.events";
 import {useContent} from "../../states/content/content.machine.service";
 import {FetchContent} from "../../states/content/content.machine.events";
 import {BlockContent} from "../../domain/content";
-
-const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
+import Layout from '../../components/layout';
+// const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
 
 // Duplicated in content.machine.service.tsx file
 const byPosition = (a: BlockContent, b: BlockContent) => {
@@ -84,7 +84,7 @@ export default function () {
         }
         if (block.type === 'code') {
             return (
-                <div className={classnames({'w-50': divided, 'w-100': !divided})}>
+                <div className={classnames({'w-1/2': divided, 'w-full': !divided})}>
                     <pre>
                         <code data-trim
                               className="hljs">
@@ -116,8 +116,8 @@ export default function () {
             if (blockSection.length === 2) {
                 return (
                     <ContentSlide title={blockSection[0].showTitle ? title : ''}>
-                        {getContentByType(blockSection[0])}
-                        <div className="flex">
+                        {getContentByType(blockSection[0], true)}
+                        <div className="flex w-1/2">
                             {getContentByType(blockSection[1])}
                         </div>
                     </ContentSlide>
@@ -129,7 +129,7 @@ export default function () {
                 return (
                     <ContentSlide title={blockSection[0].showTitle ? title : ''}>
                         {getContentByType(blockSection[0])}
-                        <div className="flex">
+                        <div className="flex flex-3">
                             {getContentByType(blockSection[1], true)}
                             {getContentByType(blockSection[2], true)}
                         </div>

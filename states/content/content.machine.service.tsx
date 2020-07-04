@@ -30,7 +30,7 @@ export const useContent = () => {
             getAll: (_, event) => {
                 return contentService.getAll(event.topicId).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const blocks: BlockContent[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchContentSuccess(blocks);
                     }),
@@ -41,7 +41,7 @@ export const useContent = () => {
                 console.log('saving content now');
                 return contentService.save(event.content).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         console.log('event content', event.content);
                         console.log('snapshot.val', snapshot.val());
                         debugger;

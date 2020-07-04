@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from "react";
 import classnames from 'classnames';
 import highlight from 'highlight.js';
 
-export const Code = ({ content, isSlideBlock }) => {
+export const Code = ({ content }) => {
     const codeRef = useRef();
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export const Code = ({ content, isSlideBlock }) => {
     }, [codeRef]);
 
     return (
-        <div className={classnames('content', {'is-slide-block': isSlideBlock})}>
+        <div>
             <pre>
                 <code data-trim className="hljs javascript" data-line-numbers="10-12" ref={codeRef}>
                     {content}

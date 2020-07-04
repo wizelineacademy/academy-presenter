@@ -1,8 +1,8 @@
 import React from 'react';
-import 'bulma/bulma.sass';
 import faker from 'faker';
 import {LessonList} from "./lesson.list";
 import {Lesson} from "../../domain/lesson";
+import {Topic} from "../../domain/topic";
 
 export default {
     title: 'Components/Lists/LessonsList',
@@ -42,8 +42,6 @@ const topics: Topic[] = lessons.reduce((acc, lesson) => {
         }
     }))]
 }, []);
-
-console.log('topics', topics);
 
 export const defaultLoader = () => <LessonList courseId={courseId} lessons={lessons} topics={topics} blocks={[]} />
 

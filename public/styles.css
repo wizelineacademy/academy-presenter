@@ -1,3 +1,5 @@
+@tailwind base;
+
 :root {
     --primary-color-one: #E93D44;
     --primary-color-two: #262E30;
@@ -27,6 +29,11 @@
     font-weight: bold;
     src: url("/assets/fonts/ProximaNova-Bold.otf") format("opentype");
 }
+
+
+@tailwind components;
+
+@tailwind utilities;
 
 #__next {
     width: 100%;
@@ -208,44 +215,15 @@ html.agenda .bg-tricolor {
     overflow-y: auto;
 }
 
-.flex {
-    display: flex;
-}
-
-.flex-grow-1 {
-    flex-grow: 1;
-}
-
-.flex-columns {
-    flex-direction: column;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-.w-50 {
-    width: 50%;
-}
-
-.w-100 {
-    width: 100%;
-}
-
-.text-left {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
 /* Reveal overwrite */
 .divider {
     background: var(--tertiary-color-two, yellow);
     height: 10px;
     width: 100%;
 }
+
+h2 { font-size: 1.5rem; color: black}
+h3 { font-size: 1.25rem; color: black}
 
 #wz-slides h1,
 #wz-slides h2,

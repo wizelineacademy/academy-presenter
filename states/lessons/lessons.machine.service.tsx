@@ -23,7 +23,7 @@ export const useLessons = () => {
             getAll: (_, event) => {
                 return lessonsService.getAll(event.courseId).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const lessons: Lesson[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchLessonsSuccess(lessons);
                     }),
@@ -47,7 +47,7 @@ export const useLessons = () => {
             findLesson: (_, event) => {
                 return lessonsService.find(event.lessonId).pipe(
                     take(1),
-                    map((snapshot) => new FindLessonSuccess(snapshot.val())),
+                    map((snapshot: firebase.database.DataSnapshot) => new FindLessonSuccess(snapshot.val())),
                     catchError(e => of(new FindLessonFail(e)))
                 )
             }

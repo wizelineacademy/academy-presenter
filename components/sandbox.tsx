@@ -24,12 +24,6 @@ export const Sandbox = ({src, divided}) => {
 };
 
 export const CodeSandbox = ({content}) => {
-    const [visible, setVisible] = useState(false);
-
-    useEffect(() => {
-
-    });
-
     return (
         <embed className="code__embed" src={content} />
     );

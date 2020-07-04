@@ -33,6 +33,13 @@ export const Editor = ({onChange, content}) => {
             data={content}
             config={{
                 // removePlugins: ['ImageUpload']
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: {name: 'h2', class: 'text-5xl'}, title: 'Title',  converterPriority: 'high' },
+                        { model: 'heading2', view: {name: 'h3', class: 'text-3xl' }, title: 'Subtitle', class: 'text-3xl' }
+                    ]
+                }
             }}
             onChange={ ( event, editor ) => {
                 const data = editor.getData();

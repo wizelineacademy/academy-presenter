@@ -1,5 +1,4 @@
 import React from 'react';
-import 'bulma/bulma.sass';
 import ContentEditor from "./content-editor";
 import {action} from "@storybook/addon-actions";
 import 'highlight.js/styles/github.css';

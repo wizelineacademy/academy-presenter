@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const StripesBackground = () => (
     <div className="bg-tricolor">
             <div className="flex academy-info">
