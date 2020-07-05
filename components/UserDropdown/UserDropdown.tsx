@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
+import styled from 'styled-components';
 import {Avatar} from '../Avatar/Avatar';
 import Link from 'next/link';
+import MdArrowBack from 'react-ionicons/lib/MdArrowBack';
+import MdExit from 'react-ionicons/lib/MdExit';
+import MdApps from 'react-ionicons/lib/MdApps';
+import MdLogIn from 'react-ionicons/lib/MdLogIn';
+import MdArrowDropdown from 'react-ionicons/lib/MdArrowDropdown';
 
 type UserDropdownProps = {
     user?: any;
@@ -16,48 +22,40 @@ const getContainerClasses = (isOpen) => {
     return menuClasses.join(' ');
 }
 
-const sharedRoutes = [{
-    path: '/logout',
-    name: 'Log out',
-}];
-
-const adminRoutes = [{
-    path: '/admin/dashboard',
-    name: 'Dashboard',
-}];
-
-const guestRoutes = [{
-    path: '/login',
-    name: 'Log In',
-}];
-
-
 export const UserDropdown = ({ user }: UserDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuClasses = getContainerClasses(isOpen);
+    const anchorClasses ="flex items-center block px-4 py-2 text-gray-800 hover:bg-red-500 hover:text-white";
 
     return (
         <div className="relative">
-            <Avatar user={user} onClick={() => setIsOpen(!isOpen)} />
+            <div className="flex items-center">
+                <Avatar user={user}/>
+                <span className="mx-3">
+                    {(user && user.current) ? user.current.displayName : 'Guest'}
+                </span>
+                <span className="mr-3 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+                    <MdArrowDropdown />
+                </span>
+            </div>
 
             <div className={menuClasses}>
-                {user && user.current && [...adminRoutes, ...sharedRoutes].map((route) => (
-                    <Link href={route.path}>
-                        <a className="block px-4 py-2 text-gray-800 hover:bg-red-500 hover:text-white">{route.name}</a>
+                {user && user.current && (
+                    <>
+                        <Link href={'/admin/dashboard'}>
+                            <a className={anchorClasses}><span className="mr-3"><MdApps /></span>Dashboard</a>
+                        </Link>
+                        <Link href={'/logout'}>
+                            <a className={anchorClasses}><span className="mr-3"><MdExit /></span>Logout</a>
+                        </Link>
+                    </>
+                )}
+
+                {!user || (user && !user.current) && (
+                    <Link href={'/login'}>
+                        <a className={anchorClasses}><span className="mr-3"><MdLogIn /></span>Log In</a>
                     </Link>
-                ))}
-
-                {!user && guestRoutes.map((route) => (
-                    <Link href={route.path}>
-                        <a className="block px-4 py-2 text-gray-800 hover:bg-red-500 hover:text-white">{route.name}</a>
-                    </Link>
-                ))}
-
-                {/* {JSON.stringify(user, null, 2)} */}
-
-                <Link href={'/login'}>
-                    <a className="block px-4 py-2 text-gray-800 hover:bg-red-500 hover:text-white">Log In</a>
-                </Link>
+                )}
             </div>
         </div>
     );

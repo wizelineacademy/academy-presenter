@@ -300,7 +300,7 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
                 )}
                 {isAdmin && isNew(currentBlock) && currentBlock.type && (
                     <div className="px-3">
-                        <div className="box">
+                        <div>
                             <label className="checkbox">
                                 <input
                                     type="checkbox"
@@ -348,9 +348,9 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
     }
 
     return (
-        <>
+        <div className="bit-dragon">
             {content}
-        </>
+        </div>
     );
 }
 

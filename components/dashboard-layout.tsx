@@ -1,6 +1,16 @@
+import React from 'react';
+import styled from 'styled-components';
 import {AppNavbar} from "./navigation";
 import MdHome from 'react-ionicons/lib/MdHome';
 import MdSchool from 'react-ionicons/lib/MdSchool';
+
+const DashboardContainer = styled.div`
+    max-height: calc(100vh - 56px);
+`
+
+const DashboardBody = styled.div`
+    min-height: calc(100vh - 56px);
+`
 
 const UserMenu = () => {
     const classNameMenu = 'hover:shadow-inner w-full px-4 py-2 text-gray-800 text-left flex items-center hover:bg-gray-200 cursor-pointer';
@@ -23,12 +33,12 @@ export const Layout = ({children, withMenu = false}) => {
         <div className="w-100">
             <AppNavbar />
             <div className="w-full">
-                <div className="flex">
+                <DashboardContainer className="flex">
                     {withMenu && <UserMenu />}
-                    <div className={containerClasses}>
+                    <DashboardBody className={containerClasses}>
                         {children}
-                    </div>
-                </div>
+                    </DashboardBody>
+                </DashboardContainer>
             </div>
         </div>
     );

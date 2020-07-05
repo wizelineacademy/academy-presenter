@@ -1,10 +1,11 @@
 /**
  * This is a HOC where we are going to inject reveal.js library
  */
-import React from 'react';
-import { useEffect, useRef } from 'react';
-import { StripesBackground } from "./../backgrounds/stripes-background";
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { StripesBackground } from "./../backgrounds/stripes-background";
+import {Button} from 'components/Button/Button';
+import MdArrowBack from 'react-ionicons/lib/MdArrowBack';
 
 export const Title = styled.h1`
     display: block;
@@ -13,12 +14,23 @@ export const Title = styled.h1`
 `;
 
 export const Section = styled.section`
-    width: calc(100vw - 25%) !important;
-    right: 0;
-    left: 0;
-    margin-right: calc((960px + -25%) / -2);
-    transform: translate(-10%);
+    padding: 2rem;
 `
+
+const EditorControlsDiv = styled.div`
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+`;
+
+const EditorControls = () => {
+    return (
+        <EditorControlsDiv>
+            <Button onClick={() => window.history.back()}><MdArrowBack /></Button>
+        </EditorControlsDiv>
+    );
+}
+
 
 export const withReveal = (Component) => (props) => {
     const slidesEl = useRef(null);
@@ -29,6 +41,7 @@ export const withReveal = (Component) => (props) => {
             const Reveal = require('reveal.js').default;
             const RevealHighlight = require('reveal.js/plugin/highlight/highlight.esm.js').default;
             const exec = new Reveal({
+                width: '90%',
                 plugins: [RevealHighlight],
             });
             exec.initialize();
@@ -44,6 +57,7 @@ export const withReveal = (Component) => (props) => {
                     <Component {...props} />
                 </div>
             </div>
+            <EditorControls />
         </>
     );
 }

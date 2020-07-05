@@ -65,8 +65,6 @@ export const CourseList = ({courses}) => {
         }
     }
 
-    console.log('siiii');
-
     return (
         <div>
             {courses.map((course) => {

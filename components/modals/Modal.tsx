@@ -38,7 +38,8 @@ export const Modal = forwardRef(({
 
     return (
         <div className="fixed inset-0">
-            <div className="z-10 absolute inset-0 flex items-center">
+            <div className="bg-black opacity-50 absolute inset-0 z-10" />
+            <div className="z-20 absolute inset-0 flex items-center">
                 <div className="w-full max-w-lg mx-auto text-left">
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <p className="text-2xl">{title}</p>
@@ -54,7 +55,6 @@ export const Modal = forwardRef(({
                     </div>
                 </div>
             </div>
-            <div className="bg-black opacity-50 absolute inset-0" />
         </div>
     );
 });

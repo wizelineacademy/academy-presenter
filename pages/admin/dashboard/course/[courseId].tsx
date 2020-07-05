@@ -49,7 +49,7 @@ export default () => {
 
     return (
         <Layout withMenu={true}>
-            <div className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4 overflow-auto">
+            <div className="bg-white rounded shadow-md px-8 pt-6 pb-8 overflow-auto w-full">
                 <section>
                     <h1 className="text-2xl mb-2">
                         {course ? course.name : '...'}
@@ -59,7 +59,7 @@ export default () => {
                     </p>
                     <div class="my-3 flex items-center">
                         <span className="tag is-info">{course ? course.level : '...'}</span>
-                        <Button className="ml-2" variant="primary" onClick={() => lessonModalRef.current.open()}>Create new lesson</Button>
+                        <Button className="ml-auto" variant="primary" onClick={() => lessonModalRef.current.open()}>Add a new lesson</Button>
                     </div>
                 </section>
 
