@@ -1,8 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from 'styled-components';
-import cx from 'classnames';
 import {Lesson} from "../../domain/lesson";
-import {ShowIf} from "../show-if";
 import Link from "next/link";
 import {DeleteConfirmationModal} from "../modals/delete.confirmation.modal";
 import {matchPastState} from "../../states/states.utils";
@@ -166,8 +164,10 @@ export const LessonList = (props: LessonListProps) => {
                                                     >
                                                         <IosTrashOutline color={"white"}/>
                                                     </Button>
-                                                    <Link variant="primary" href={`/slides/${lesson.id}?course=${courseId}`}>
-                                                        <Button><MdPlay /></Button>
+                                                    <Link href={`/slides/${lesson.id}?course=${courseId}`}>
+                                                        <a target="_blank" rel="noopener noreferrer">
+                                                            <Button><MdPlay /></Button>
+                                                        </a>
                                                     </Link>
                                                 </>
                                             )}

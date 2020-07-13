@@ -35,10 +35,12 @@ export default () => {
     }
 
     useEffect(() => {
-        courseId && send(new FetchLessons(courseId as string));
-        courseId && sendCourse(new FindCourse(courseId as string));
-        courseId && sendTopic(new FetchTopics(courseId as string));
-        courseId && sendContent(new FetchContent(courseId as string));
+        if (courseId) {
+            send(new FetchLessons(courseId as string));
+            sendCourse(new FindCourse(courseId as string));
+            sendTopic(new FetchTopics(courseId as string));
+            sendContent(new FetchContent(courseId as string));
+        }
     }, [courseId]);
 
     useEffect(() => {
@@ -57,7 +59,7 @@ export default () => {
                     <p className="leading-snug text-sm text-gray-600">
                         {course ? course.summary : '...'}
                     </p>
-                    <div class="my-3 flex items-center">
+                    <div className="my-3 flex items-center">
                         <span className="tag is-info">{course ? course.level : '...'}</span>
                         <Button className="ml-auto" variant="primary" onClick={() => lessonModalRef.current.open()}>Add a new lesson</Button>
                     </div>

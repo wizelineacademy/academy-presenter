@@ -4,7 +4,7 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { StripesBackground } from "./../backgrounds/stripes-background";
-import {Button} from 'components/Button/Button';
+import {Button} from '@components/Button/Button';
 import MdArrowBack from 'react-ionicons/lib/MdArrowBack';
 
 export const Title = styled.h1`

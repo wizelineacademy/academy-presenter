@@ -1,6 +1,6 @@
 import React, {forwardRef, useRef} from "react";
 import {DeleteLesson} from "../../states/lessons/lessons.machine.events";
-import {DeleteConfirmationModalProps} from "../../domain/modal";
+import {DeleteConfirmationModalProps, ModalOptions} from "../../domain/modal";
 import {Modal} from './Modal';
 
 export const DeleteConfirmationModal = forwardRef(({send, state}: DeleteConfirmationModalProps, ref) => {

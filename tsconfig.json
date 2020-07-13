@@ -21,7 +21,11 @@
     "paths": {
       "@components/*": ["./components/*"],
       "@components/": ["./components/"],
-      "@states/*": ["./states/*"]
+      "@states/*": ["./states/*"],
+      "@states/": ["./states/"],
+      "@context/*": ["./context/*"],
+      "@context/": ["./context/"],
+      "@domain/*": ["./domain/*"]
     }
   },
   "exclude": [

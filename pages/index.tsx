@@ -22,3 +22,10 @@ export default function () {
         </>
     );
 }
+
+export async function getStaticProps() {
+    const { Logger } = require('../clients/logger');
+    const logger = new Logger('HomePage')
+    logger.info('Fetching inital data');
+    return { props: {} };
+}

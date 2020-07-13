@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {Modal} from './Modal';
 import {Button} from '../Button/Button';
 import {TopicModal} from './topic.modal';
+import { ContentEditorModal } from './content-editor.modal';
 
 export default {
     title: 'Components/Modal',
@@ -37,6 +38,26 @@ export const topicModal = () => {
     );
 }
 
+export const contentEditorModal = () => {
+    const modalRef = useRef();
+    const codeModalRef = useRef();
+    const embedModalRef = useRef();
+    const textModalTrigger = () => modalRef.current.open()
+    const codeModalTrigger = () => codeModalRef.current.open()
+    const embedModalTrigger = () => embedModalRef.current.open()
+
+    return (
+        <div className="p-3 text-center">
+            <Button className="mr-3" onClick={textModalTrigger}>Show TEXT modal</Button>
+            <Button className="mr-3" onClick={codeModalTrigger}>Show CODE modal</Button>
+            <Button onClick={embedModalTrigger}>Show EMBED modal</Button>
+
+            <ContentEditorModal type="text" ref={modalRef}/>
+            <ContentEditorModal type="code" ref={codeModalRef}/>
+            <ContentEditorModal type="embed" ref={embedModalRef}/>
+        </div>
+    );
+}
 
 modal.story = {
     name: 'Base',

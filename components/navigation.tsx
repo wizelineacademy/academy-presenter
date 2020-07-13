@@ -1,6 +1,4 @@
 import React, {useState, useContext} from 'react';
-import cx from 'classnames';
-import Link from 'next/link';
 import {UserDropdown} from './UserDropdown/UserDropdown';
 import {ServiceContext} from "../context/service.context";
 
@@ -33,13 +31,20 @@ export const Navbar = ({isActive, user, onHamburgerClick}: NavbarProps) => {
 export const AppNavbar = () => {
     const [isActive, setActive] = useState(false);
     const {userSession: user} = useContext(ServiceContext);
+    const [currentUser, setUser] = useState(user.current);
     const toggleMenu = () => setActive(!isActive);
+
+    user.current$.subscribe(u => {
+        if (currentUser !== u) {
+            setUser(u);
+        }
+    });
 
     return (
         <Navbar
             isActive={isActive}
             onHamburgerClick={toggleMenu}
-            user={user}
+            user={currentUser}
         />
     );
 };

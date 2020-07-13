@@ -2,30 +2,27 @@ import Layout from "@components/dashboard-layout";
 import Link from "next/link";
 import {useContext, useEffect} from "react";
 import {ServiceContext} from "../../../context/service.context";
-import {useCourses} from "../../../states/courses/courses.machine.service";
-import {FetchUserCourses} from "../../../states/courses/courses.machine.events";
-import {useRouter} from "next/router";
-import {Loader} from "../../../components/loader";
+import {useCourses} from "@states/courses/courses.machine.service";
+import {FetchUserCourses} from "@states/courses/courses.machine.events";
+import {Loader} from "@components/loader";
 import {convertToBatch} from "../../../utils/array-batch";
-import Course from "../../../domain/course";
-import {CourseList} from '../../../components/lists/CourseList';
+import Course from "@domain/course";
+import {CourseList} from '@components/lists/CourseList';
 import MdAdd from 'react-ionicons/lib/MdAdd';
 
 export default () => {
     const {userSession: user} = useContext(ServiceContext);
-    const router = useRouter();
     const [coursesState, sendCourse] = useCourses();
     const {items: courses} = coursesState.context;
     const coursesBatch = convertToBatch(courses);
     const isLoading = coursesState.matches('fetchingByUser');
 
     useEffect(() => {
-        if (user.isLoggedIn) {
+        if (!courses.length && user && user.isLoggedIn) {
+            console.log('===> empty', user.id)
             sendCourse(new FetchUserCourses(user.id));
-            return;
         }
-        //router.push('/unauthorized');
-    }, [])
+    }, [courses, user])
 
     if (!isLoading) {
         return (

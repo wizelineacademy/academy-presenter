@@ -3,7 +3,7 @@ import {ShowIf} from "../show-if";
 
 type TextAreaProps = {
     label?: string,
-    value: string | number,
+    value?: string | number,
     errors: string,
 } & TextareaHTMLAttributes<HTMLTextAreaElement>
 

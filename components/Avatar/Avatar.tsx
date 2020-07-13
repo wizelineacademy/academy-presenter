@@ -8,8 +8,8 @@ type AvatarProps = {
 export const Avatar = ({ user, onClick }: AvatarProps) => {
     let imageSrc = "http://placekitten.com/g/200/300";
 
-    if (user && user.current) {
-        imageSrc = user.current.photoURL;
+    if (user) {
+        imageSrc = user.photoURL;
     }
 
     if (onClick) {

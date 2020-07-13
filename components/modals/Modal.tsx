@@ -10,8 +10,10 @@ export const Modal = forwardRef(({
     onConfirmAction,
     title = 'Delete confirmation',
     confirmLabel = 'Apply',
-    hideControls = false
+    hideControls = false,
+    sizeLarge
 }, ref) => {
+    const modalSize = sizeLarge ? 'max-w-4xl': 'max-w-lg'
     const [modalState, sendModal] = useModal();
     const isActive = !modalState.matches('hidden');
 
@@ -40,7 +42,7 @@ export const Modal = forwardRef(({
         <div className="fixed inset-0">
             <div className="bg-black opacity-50 absolute inset-0 z-10" />
             <div className="z-20 absolute inset-0 flex items-center">
-                <div className="w-full max-w-lg mx-auto text-left">
+                <div className={`w-full ${modalSize} mx-auto text-left`}>
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <p className="text-2xl">{title}</p>
                         <section className="py-3">
