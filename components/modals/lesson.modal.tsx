@@ -1,14 +1,14 @@
-import cx from 'classnames';
+import React, {useRef} from 'react';
 import * as Yup from 'yup';
-import {ShowIf} from "../show-if";
 import {useFormik} from "formik";
-import {useModal} from "../../states/modal/modal.machine.service";
 import {Lesson} from "../../domain/lesson";
-import {CloseModal, ShowModal} from "../../states/modal/modal.machine.events";
 import {ModalOptions} from "../../domain/modal";
 import {forwardRef} from "react";
 import {SaveLesson} from "../../states/lessons/lessons.machine.events";
-import {createhasErrors} from "./modal.utils";
+import {TextField} from '../TextField/TextField';
+import {TextArea} from '../TextArea/TextArea';
+import {Button} from '../Button/Button';
+import {Modal} from './Modal';
 
 type LessonModalProps = {
     courseId: string;
@@ -16,8 +16,7 @@ type LessonModalProps = {
 };
 
 export const LessonModal = forwardRef(({courseId, dispatch}: LessonModalProps, ref) => {
-    const [modalState, sendModal] = useModal();
-    const modalClasses = cx('modal', {'is-active': modalState.matches('visible')});
+    const modalRef = useRef();
 
     const lessonForm = useFormik({
         initialValues: new Lesson(),
@@ -41,115 +40,55 @@ export const LessonModal = forwardRef(({courseId, dispatch}: LessonModalProps, r
         }
     });
 
-    const hasErrors = createhasErrors(lessonForm);
-
     const close = () => {
         lessonForm.resetForm({});
-        sendModal(new CloseModal());
+        modalRef.current.close();
     };
 
     const open = (opts: ModalOptions) => {
-        sendModal(new ShowModal(opts))
+        modalRef.current.open(opts);
     };
 
     // @ts-ignore
     ref.current = {open, close};
 
     return (
-        <div className={modalClasses}>
-            <div className="modal-background"/>
-            <div className="modal-card">
-                <header className="modal-card-head">
-                    <p className="modal-card-title">Add a Lesson</p>
-                    <button className="delete" aria-label="close" onClick={close}/>
-                </header>
-                <section className="modal-card-body">
-                    <form onSubmit={lessonForm.handleSubmit}>
-                        <div className="field is-horizontal">
-                            <div className="field-label is-normal">
-                                <label className="label" htmlFor="name">Name *</label>
-                            </div>
-                            <div className="field-body">
-                                <div className="field">
-                                    <div className="control">
-                                        <input
-                                            className="input"
-                                            type="text"
-                                            name="name"
-                                            placeholder="e.g. First step to create awesome pages"
-                                            onChange={lessonForm.handleChange}
-                                            onBlur={lessonForm.handleBlur}
-                                            value={lessonForm.values.name || ''}
-                                        />
-                                    </div>
-                                    <ShowIf condition={hasErrors('name')}>
-                                        <p className="help is-danger">
-                                            {lessonForm.errors.name}
-                                        </p>
-                                    </ShowIf>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field is-horizontal">
-                            <div className="field-label is-normal">
-                                <label className="label" htmlFor="summary">Summary *</label>
-                            </div>
-                            <div className="field-body">
-                                <div className="field">
-                                    <div className="control">
-                                        <textarea
-                                            className="textarea"
-                                            name="summary"
-                                            placeholder="e.g. We should create awesome stuffs"
-                                            onChange={lessonForm.handleChange}
-                                            onBlur={lessonForm.handleBlur}
-                                            value={lessonForm.values.summary || ''}
-                                        />
-                                    </div>
-                                    <ShowIf condition={hasErrors('summary')}>
-                                        <p className="help is-danger">
-                                            {lessonForm.errors.summary}
-                                        </p>
-                                    </ShowIf>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field is-horizontal">
-                            <div className="field-label is-normal">
-                                <label className="label" htmlFor="summary">Position</label>
-                            </div>
-                            <div className="field-body">
-                                <div className="field">
-                                    <div className="control">
-                                        <input
-                                            className="input"
-                                            type="number"
-                                            name="position"
-                                            placeholder="1"
-                                            onChange={lessonForm.handleChange}
-                                            onBlur={lessonForm.handleBlur}
-                                            value={lessonForm.values.position || ''}
-                                        />
-                                    </div>
-                                    <ShowIf condition={hasErrors('summary')}>
-                                        <p className="help is-danger">
-                                            {lessonForm.errors.position}
-                                        </p>
-                                    </ShowIf>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field is-grouped is-grouped-right">
-                            <div className="control">
-                                <button className="button is-success" type="submit">Save changes</button>
-                            </div>
-                            <div className="control">
-                                <button onClick={close} className="button">Cancel</button>
-                            </div>
-                        </div>
-                    </form>
-                </section>
-            </div>
-        </div>
+        <Modal ref={modalRef} title="Add a Lesson" hideControls={true} >
+            <section>
+                <form onSubmit={lessonForm.handleSubmit}>
+                    <TextField
+                        label="Name *"
+                        name="name"
+                        placeholder="e.g. First step to create awesome pages"
+                        onChange={lessonForm.handleChange}
+                        onBlur={lessonForm.handleBlur}
+                        value={lessonForm.values.name || ''}
+                        errors={lessonForm.errors.name}
+                    />
+                    <TextArea
+                        label="Summary *"
+                        name="summary"
+                        placeholder="e.g. We should create awesome stuffs"
+                        onChange={lessonForm.handleChange}
+                        onBlur={lessonForm.handleBlur}
+                        value={lessonForm.values.summary || ''}
+                        errors={lessonForm.errors.summary}
+                    />
+                    <TextField
+                        label="Position"
+                        name="position"
+                        type="number"
+                        placeholder="1"
+                        onChange={lessonForm.handleChange}
+                        onBlur={lessonForm.handleBlur}
+                        value={lessonForm.values.position || ''}
+                    />
+                    <div className="flex items-center justify-end">
+                        <Button onClick={close}>Cancel</Button>
+                        <Button variant="primary" className="ml-2" type="submit">Save changes</Button>
+                    </div>
+                </form>
+            </section>
+        </Modal>
     );
 });

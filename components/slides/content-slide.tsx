@@ -1,12 +1,15 @@
 const RenderIf = ({condition, children}) => condition ? children : null;
+import { Title, Section } from './withReveal';
 
-export const ContentSlide = ({ title = 'DOM', children}) => {
+export const ContentSlide = ({ title = 'DOM', variant = 1, children}) => {
     return (
-        <section data-state="test2" className="content-slide flex">
+        <Section data-state={`content-variant-${variant}`}>
             <RenderIf condition={title}>
-                <h4>{title}</h4>
+                <Title className="text-left slide-title">{title}</Title>
             </RenderIf>
-            {children}
-        </section>
+            <div className="flex">
+                {children}
+            </div>
+        </Section>
     );
 }

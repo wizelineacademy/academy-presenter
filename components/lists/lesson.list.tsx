@@ -1,17 +1,26 @@
-import {useEffect, useRef, useState} from "react";
-import cx from 'classnames';
+import React, {useEffect, useRef, useState} from "react";
+import styled from 'styled-components';
 import {Lesson} from "../../domain/lesson";
-import {ShowIf} from "../show-if";
 import Link from "next/link";
 import {DeleteConfirmationModal} from "../modals/delete.confirmation.modal";
 import {matchPastState} from "../../states/states.utils";
 import {TopicModal} from "../modals/topic.modal";
 import {Topic} from "../../domain/topic";
+import dynamic from "next/dynamic";
+import {BlockContent} from "../../domain/content";
+import {Button} from '../Button/Button';
+import IosClockOutline from 'react-ionicons/lib/IosClockOutline';
+import MdPlay from 'react-ionicons/lib/MdPlay';
+import IosTrashOutline from 'react-ionicons/lib/IosTrashOutline';
+import MdAdd from 'react-ionicons/lib/MdAdd';
+
+const ContentEditor = dynamic(() => import('../content-editor'), {ssr: false});
 
 type LessonListProps = {
     courseId: string;
     lessons: Lesson[];
     topics: Topic[];
+    blocks: BlockContent[];
     onAddLesson?: any;
     isAdmin?: boolean;
     sendTopic?: any;
@@ -19,12 +28,38 @@ type LessonListProps = {
     send?: any;
     state?: any;
     preview?: boolean;
+    sendContent?: any;
 }
 
+const ItemDiv = styled.div`
+    &:hover {
+    .controls {
+    display: flex;
+    }
+    }
+
+    .controls {
+    display: none;
+    }
+`;
+
 export const LessonList = (props: LessonListProps) => {
-    const {lessons = [], topics=[], isAdmin = false, send, sendTopic, state, preview = false, onAddLesson, topicState, courseId} = props;
+    const {
+        lessons = [],
+        topics=[],
+        blocks = [],
+        isAdmin = true,
+        send,
+        sendContent,
+        sendTopic,
+        state,
+        preview = false,
+        onAddLesson,
+        topicState,
+        courseId,
+    } = props;
     const [selectedLesson, setSelectedLesson] = useState(null);
-    const [lessonTopics, setLessonTopics] = useState([]);
+    const [topicLessonsDict, setTopicLessonsDict] = useState({});
     const deleteModalRef = useRef(null);
     const addTopicModalRef = useRef(null);
 
@@ -34,24 +69,33 @@ export const LessonList = (props: LessonListProps) => {
         return selectedLesson && lesson.id === selectedLesson.id;
     };
 
-    const selectLesson = (lesson: Lesson) => {
+    const selectLesson = (e, lesson: Lesson) => {
+        e.stopPropagation();
+
         if (!selectedLesson || selectedLesson !== lesson.id) {
             setSelectedLesson(lesson);
+        } else if (selectedLesson && selectedLesson === lesson.id){
+            setSelectedLesson(null);
         }
     };
 
-    const assignDefaultSelection = () => {
-        const hasNotSelection = !selectedLesson && lessons.length > 0;
-        const currentSelectionRemoved = selectedLesson && !lessons.includes(selectedLesson);
-
-        if (hasNotSelection || currentSelectionRemoved) {
-            setSelectedLesson(lessons[0]);
+    const mapTopics = () => {
+        if (topics.length > 0) {
+            const topicLessonsMap = topics.reduce((acc, topic) => {
+                const lessonId = topic.lessonId
+                if (!acc[lessonId]) {
+                    acc[lessonId] = []
+                }
+                acc[lessonId].push(topic);
+                return acc;
+            }, {});
+            setTopicLessonsDict(topicLessonsMap);
         }
-    };
+    }
 
     const deleteLesson = (event, lesson: Lesson) => {
         event.stopPropagation();
-        deleteModalRef.current.showModal({
+        deleteModalRef.current.open({
             name: lesson.name,
             type: 'Course',
             entity: lesson
@@ -62,14 +106,9 @@ export const LessonList = (props: LessonListProps) => {
         addTopicModalRef.current.open();
     }
 
-    const updateTopicsLesson = () => {
-        const filteredTopics: Topic[] = selectedLesson ? topics.filter(byLesson) : []
-        setLessonTopics(filteredTopics)
-    }
-
     const closeDeleteModalAfterDeleted = () => {
         if (state && matchPastState(state, 'deleting')) {
-            deleteModalRef.current.closeModal();
+            deleteModalRef.current.close();
         }
     }
 
@@ -79,77 +118,104 @@ export const LessonList = (props: LessonListProps) => {
         }
     }
 
-    const lessonURL = () => selectedLesson ? `/lessons/${selectedLesson.id}` : '#';
-    const slideULR = () => selectedLesson ? `/slides/${selectedLesson.id}` : '#';
+    const filteredBlocks = (topicId): BlockContent[] => {
+        return blocks.filter(block => {
+            return block.topicId === topicId && block.courseId === courseId;
+        })
+    }
 
-    useEffect(assignDefaultSelection, [lessons]);
-    useEffect(updateTopicsLesson, [selectedLesson])
     useEffect(closeDeleteModalAfterDeleted, [state]);
     useEffect(closeAddTopicModalAfterAdded, [topicState]);
+    useEffect(mapTopics, [topics])
 
     return (
         <>
-            <div className="columns">
-                <div className="column is-one-quarter">
-                    <aside className="menu">
-                        <p className="menu-label">
-                            Lessons
-                            <ShowIf condition={preview}>
-                                <button onClick={onAddLesson} className="button is-small is-pulled-right is-primary"><span>+</span></button>
-                            </ShowIf>
-                        </p>
-                        <ul className="menu-list">
-                            {lessons.map((lesson: Lesson, idx) => (
-                                <li key={lesson.id || idx} onClick={() => selectLesson(lesson)}>
-                                    <a className={cx({'is-active': isActive(lesson)})}>{lesson.name}
-                                    <ShowIf condition={isAdmin}>
-                                        <span
-                                            onClick={(evt) => deleteLesson(evt, lesson)}
-                                            className="is-pulled-right delete"
-                                        />
-                                    </ShowIf>
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </aside>
-                </div>
-                <div className="column">
-                    <ShowIf condition={selectedLesson}>
-                        <h2 className="is-size-2">{selectedLesson && selectedLesson.name}</h2>
-                        <h4 className="is-size-4">Objective</h4>
-                        <p>
-                            {selectedLesson && selectedLesson.summary}
-                        </p>
-                        <ShowIf condition={!preview}>
-                            <Link href={slideULR()}>
-                                <button className="button is-success is-light">Start Presentation</button>
-                            </Link>
-                        </ShowIf>
-                        <ShowIf condition={preview}>
-                            <section className="section">
-                                <button className="button is-danger is-pulled-right">Delete course</button>
-                                <button onClick={openTopicDialog} className="button is-success is-pulled-right">Add Content</button>
-                            </section>
-                        </ShowIf>
-                        {lessonTopics.map(topic => (
-                            <section key={topic.id} className="section">
-                                <h3 className="title">{topic.title}</h3>
-                                <h4 className="subtitle">{topic.description}</h4>
-                                <p>{topic.summary}</p>
-                            </section>
-                        ))}
-                    </ShowIf>
-                </div>
+            <DeleteConfirmationModal ref={deleteModalRef} send={send} state={state}/>
 
-                <DeleteConfirmationModal ref={deleteModalRef} send={send} state={state}/>
+            <TopicModal
+                courseId={courseId}
+                lessonId={selectedLesson ? selectedLesson.id : null}
+                sendTopic={sendTopic}
+                ref={addTopicModalRef}
+            />
 
-                <TopicModal
-                    courseId={courseId}
-                    lessonId={selectedLesson ? selectedLesson.id : null}
-                    sendTopic={sendTopic}
-                    ref={addTopicModalRef}
-                />
+            <div className="bg-white rounded">
+                <div>
+                    {lessons.map((lesson: Lesson, idx) => (
+                        <ItemDiv className="lesson-list-item" key={lesson.id || idx}>
+                            <a>
+                                <div className="relatives">
+                                    <div className="block rounded-lg py-3 px-5 flex items-center border border-t-0 border-l-0 border-r-0 bg-white">
+                                        <div className="overflow-x-auto leading-relaxed">
+                                            <h2 className="mr-2 text-5xl font-bold text-blue-600">
+                                                {lesson.name}
+                                            </h2>
+                                            <p className="w-50 text-sm truncate whitespace-no-wrap overflow-x-auto">
+                                                {lesson.summary}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center controls">
+                                            {isAdmin && (
+                                                <>
+                                                    <Button
+                                                        variant="danger"
+                                                        className="mr-2"
+                                                        onClick={(evt) => deleteLesson(evt, lesson)}
+                                                    >
+                                                        <IosTrashOutline color={"white"}/>
+                                                    </Button>
+                                                    <Link href={`/slides/${lesson.id}?course=${courseId}`}>
+                                                        <a target="_blank" rel="noopener noreferrer">
+                                                            <Button><MdPlay /></Button>
+                                                        </a>
+                                                    </Link>
+                                                </>
+                                            )}
+                                            <Button
+                                                onClick={(e) => selectLesson(e, lesson)}
+                                                className="ml-2"
+                                            >
+                                                <MdAdd />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    {(topicLessonsDict[lesson.id] && topicLessonsDict[lesson.id] || [new Topic()]).map((topic, idx) =>
+                                        {
+                                            if (isActive(lesson)) {
+                                                return (
+                                                    <div className={`py-6 px-5 bg-gray-100`} >
+                                                        <section className="section leading-relaxed relative">
+                                                            {idx === 0 && (
+                                                                <p className="text-gray-600">
+                                                                    <h5 className="text-xl text-blue-500">Summary:</h5>
+                                                                    {lesson.summary}
+                                                                </p>
+                                                            )}
+                                                            <div key={topic.id} className="static">
+                                                                <h3 className="text-4xl">{topic.title}</h3>
+                                                                <h4 className="">{topic.description}</h4>
+                                                                <p className="text-gray-600">{topic.summary}</p>
+                                                                <br/>
+                                                                <ContentEditor
+                                                                    courseId={courseId}
+                                                                    lessonId={lesson.id}
+                                                                    topic={topic}
+                                                                    blocks={filteredBlocks(topic.id)}
+                                                                    sendContent={sendContent}
+                                                                    isAdmin={isAdmin}
+                                                                />
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                )
+                                            }
+                                        }
+                                    )}
+                                </div>
+                            </a>
+                        </ItemDiv>
+                    ))}
+                </div>
             </div>
         </>
     );

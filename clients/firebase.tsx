@@ -31,4 +31,18 @@ export class FirebaseClient {
     get database() {
         return this._firebase.database();
     }
+
+    get auth() {
+        return this._firebase.auth();
+    }
+
+    get googleProvider() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        return provider;
+    }
+
+    get persistenceOption() {
+        return this._firebase.auth.Auth.Persistence.SESSION;
+    }
 }

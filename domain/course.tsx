@@ -4,7 +4,7 @@ export default class Course {
     id: string;
     name: string;
     summary: string;
-    tech: string[];
+    tech: string;
     duration: number; // Estimated duration in minutes
     createdAt: number;
     updatedAt: number;

@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
+import classnames from 'classnames';
 import dynamic from "next/dynamic";
 import {TitleSlideOptionOne} from '../../components/slides/title-slide-option-1';
-import {TitleSlideOptionTwo} from '../../components/slides/title-slide-option-2';
 import {ContentSlide} from "../../components/slides/content-slide";
 import {Agenda} from "../../components/slides/agenda-slide";
 import {Sandbox} from "../../components/sandbox";
@@ -13,45 +13,141 @@ import {Loader} from "../../components/loader";
 import {Topic} from "../../domain/topic";
 import {useLessons} from "../../states/lessons/lessons.machine.service";
 import {FindLesson} from "../../states/lessons/lessons.machine.events";
+import {useContent} from "../../states/content/content.machine.service";
+import {FetchContent} from "../../states/content/content.machine.events";
+import {BlockContent} from "../../domain/content";
+import Layout from '../../components/layout';
+// const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
 
-const Layout = dynamic(() => import('../../components/layout'), {ssr: false});
+// Duplicated in content.machine.service.tsx file
+const byPosition = (a: BlockContent, b: BlockContent) => {
+    if (a.position < b.position) {
+        return -1;
+    }
+    if (a.position > b.position) {
+        return  1;
+    }
+};
 
 export default function () {
     const router = useRouter()
-    const {lessonId} = router.query;
+    const {lessonId, course: courseId} = router.query;
     const [topicState, sendTopic] = useTopics();
     const [lessonsState, sendLesson] = useLessons();
-    const isLoading = topicState.matches('fetching');
+    const [contentState, sendContent] = useContent();
+    const isTopicLoading = topicState.matches('fetching');
     const isCourseLoading = lessonsState.matches('finding');
+    const isContentLoading = contentState.matches('fetching');
+    const isLoading = isTopicLoading || isCourseLoading || isContentLoading;
     const topics: Topic[] = topicState.context.items;
     const {currentItem: lesson} = lessonsState.context;
+    const {items: blocks} = contentState.context;
+
 
     const fetchContent = () => {
-        if (lessonId) {
+        if (lessonId && courseId) {
+            console.log('fetching lesson, topics and course info');
             sendTopic(new FindTopics(lessonId as string))
             sendLesson(new FindLesson(lessonId as string));
+            sendContent(new FetchContent(courseId as string));
         }
     }
 
-    useEffect(fetchContent, [lessonId]);
+    const getContentBlocks = (topicId: string) => {
+        const bySlideBlock = block => block.topicId === topicId && block.isSlideBlock;
+        const toSectionBlocks = (acc, block) => {
+            if (!acc.blocks[acc.pos]) {
+                acc.blocks[acc.pos] = [];
+            }
 
-    // First two elements inside the Layout (Slide) are required
-    // The first one is the title of the presentation
-    // The second component is the agenda
-    // The rest of the elements are going to be generated based on the topics content and slide type selection
+            acc.blocks[acc.pos].push(block);
+
+            if (block.isLastSlideBlock) {
+                acc.pos += 1;
+            }
+
+            return acc;
+        }
+
+        const blocksSection = [...blocks]
+            .filter(bySlideBlock)
+            .sort(byPosition)
+            .reduce(toSectionBlocks, {blocks: [], pos: 0});
+        return blocksSection.blocks;
+    }
+
+    useEffect(fetchContent, [lessonId, courseId]);
+
+    const getContentByType = (block, divided = false) => {
+        if (block.type === 'text') {
+            return <div className="content" dangerouslySetInnerHTML={{__html: block.content}} />
+        }
+        if (block.type === 'code') {
+            return (
+                <div className={classnames({'w-1/2': divided, 'w-full': !divided})}>
+                    <pre>
+                        <code data-trim
+                              className="hljs">
+                            {block.content}
+                        </code>
+                    </pre>
+                </div>
+            );
+        }
+        if (block.type === 'embed') {
+            return <Sandbox src={block.content} divided={Boolean(divided)} />
+        }
+    }
+
+    const getContentFromTopic = (topicId: string, title: string) => {
+        const blockSectionList = getContentBlocks(topicId)
+
+        return blockSectionList.map(blockSection => {
+            // One single block
+            if (blockSection.length === 1) {
+                return (
+                    <ContentSlide title={title}>
+                        {getContentByType(blockSection[0])}
+                    </ContentSlide>
+                );
+            }
+
+            // Two blocks
+            if (blockSection.length === 2) {
+                return (
+                    <ContentSlide title={blockSection[0].showTitle ? title : ''}>
+                        {getContentByType(blockSection[0], true)}
+                        <div className="flex w-1/2">
+                            {getContentByType(blockSection[1])}
+                        </div>
+                    </ContentSlide>
+                );
+            }
+
+            // Three blocks
+            if (blockSection.length === 3) {
+                return (
+                    <ContentSlide title={blockSection[0].showTitle ? title : ''}>
+                        {getContentByType(blockSection[0])}
+                        <div className="flex flex-3">
+                            {getContentByType(blockSection[1], true)}
+                            {getContentByType(blockSection[2], true)}
+                        </div>
+                    </ContentSlide>
+                );
+            }
+            return null;
+        });
+    }
+
     return (
         <>
-            <Loader isLoading={isLoading || isCourseLoading} />
-            <ShowIf condition={!isLoading && !isCourseLoading}>
+            <Loader isLoading={isLoading} />
+            <ShowIf condition={!isLoading}>
                 <Layout>
                     <TitleSlideOptionOne title={lesson && lesson.name} author={lesson && lesson.speaker}/>
                     <Agenda topics={topics}/>
-                    <TitleSlideOptionTwo />
-                    {topics.map(topic=> (
-                        <ContentSlide title={topic.title}>
-                            <Sandbox src="https://codesandbox.io/embed/indeterminate-checkbox-state-uexld?fontsize=14&hidenavigation=1&theme=dark&view=preview"/>
-                        </ContentSlide>
-                    ))}
+                    {topics.map(topic=> getContentFromTopic(topic.id, topic.title))}
                 </Layout>
             </ShowIf>
         </>

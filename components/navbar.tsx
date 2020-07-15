@@ -1,16 +1,16 @@
-import {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import cx from 'classnames';
 import Link from 'next/link';
 import {ShowIf} from "./show-if";
 
 type NavbarProps = {
     isAdmin?: boolean;
+    isActive?: boolean;
+    user?: any;
+    onHamburgerClick: any;
 }
 
-export const Navbar = ({isAdmin}: NavbarProps) => {
-    const [isActive, setActive] = useState(false);
-    const toggleMenu = () => setActive(!isActive);
-
+export const Navbar = ({isAdmin, isActive, user, onHamburgerClick}: NavbarProps) => {
     const hamburgerMenuClasses = cx('navbar-burger burger', {'is-active': isActive});
 
     return (
@@ -25,7 +25,7 @@ export const Navbar = ({isAdmin}: NavbarProps) => {
                    aria-label="menu"
                    aria-expanded="false"
                    data-target="navigation-menu"
-                   onClick={toggleMenu}
+                   onClick={onHamburgerClick}
                 >
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
@@ -34,27 +34,41 @@ export const Navbar = ({isAdmin}: NavbarProps) => {
             </div>
 
             <div id="navigation-menu" className="navbar-menu">
-                <ShowIf condition={isAdmin}>
-                    <div className="navbar-start">
-                        <Link href="/dashboard">
-                            <a className="navbar-item">
-                                Dashboard
-                            </a>
-                        </Link>
-                    </div>
-                </ShowIf>
-                <div className="navbar-end is-hidden">
-                    <div className="navbar-item">
-                        <div className="buttons">
-                            <a className="button is-primary">
-                                <strong>Sign up</strong>
-                            </a>
-                            <a className="button is-light">
-                                Log in
-                            </a>
+                {!user.isLoggedIn && (
+                    <div className="navbar-end">
+                        <div className="navbar-item">
+                            <div className="buttons">
+                                <Link href="/login">
+                                    <a className="button is-primary">
+                                        Log in
+                                    </a>
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
+
+                {user.isLoggedIn && (
+                    <div className="navbar-end">
+                        <div className="navbar-item has-dropdown is-hoverable">
+                            <a className="navbar-link">
+                                <figure className="image is-32x32">
+                                    <img className="is-rounded" src={user.current.photoURL} />
+                                </figure>
+                            </a>
+                            <div className="navbar-dropdown">
+                                <Link href="/admin/dashboard">
+                                    <a className="navbar-item">Dashboard</a>
+                                </Link>
+
+                                <hr className="navbar-divider"/>
+                                <Link href="/logout">
+                                    <a className="navbar-item">Log out</a>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </nav>
     );

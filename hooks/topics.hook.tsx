@@ -10,13 +10,13 @@ export const useLoadTopics = (): [Topic[], boolean, TopicsService] => {
     const [service] = useState(topicsService);
 
     useEffect(() => {
-        const subscription = service.items$.subscribe({next: setData});
-        const subscriptionTwo = service.isLoading$.subscribe({next: setIsLoading});
-
-        return () => {
-            subscription.unsubscribe();
-            subscriptionTwo.unsubscribe();
-        }
+        // const subscription = service.items$.subscribe({next: setData});
+        // const subscriptionTwo = service.isLoading$.subscribe({next: setIsLoading});
+        //
+        // return () => {
+        //     subscription.unsubscribe();
+        //     subscriptionTwo.unsubscribe();
+        // }
     }, [service]);
 
     console.log('data: ', data);

@@ -1,3 +1,5 @@
+@tailwind base;
+
 :root {
     --primary-color-one: #E93D44;
     --primary-color-two: #262E30;
@@ -27,6 +29,11 @@
     font-weight: bold;
     src: url("/assets/fonts/ProximaNova-Bold.otf") format("opentype");
 }
+
+
+@tailwind components;
+
+@tailwind utilities;
 
 #__next {
     width: 100%;
@@ -62,6 +69,30 @@ html.test body {
 html.title-slide-option-one body {
     background: url('/assets/bg1.png') no-repeat 100%;
     background-size: contain;
+}
+
+html.content-variant-1 body {
+    background: url('/assets/red-line.png') no-repeat 100%;
+    background-size: contain;
+}
+
+html.content-variant-2 body {
+    background: url('/assets/blue-line.png') no-repeat 100%;
+    background-size: contain;
+}
+
+html.content-variant-3 body {
+    background: url('/assets/yellow-line.png') no-repeat 100%;
+    background-size: contain;
+}
+
+/* Force slide position */
+.slides section.content-slide {
+    top: 15px !important;
+}
+
+.reveal .slide-title {
+    color: var(--tertiary-color-one, pink);
 }
 
 .bar {
@@ -184,34 +215,6 @@ html.agenda .bg-tricolor {
     overflow-y: auto;
 }
 
-.flex {
-    display: flex;
-}
-
-.flex-grow-1 {
-    flex-grow: 1;
-}
-
-.flex-columns {
-    flex-direction: column;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-.w-50 {
-    width: 50%;
-}
-
-.text-left {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
 /* Reveal overwrite */
 .divider {
     background: var(--tertiary-color-two, yellow);
@@ -219,13 +222,16 @@ html.agenda .bg-tricolor {
     width: 100%;
 }
 
+h2 { font-size: 1.5rem; color: black}
+h3 { font-size: 1.25rem; color: black}
+
 #wz-slides h1,
 #wz-slides h2,
 #wz-slides h3,
 #wz-slides h4,
 #wz-slides h5,
 #wz-slides h6 {
-    text-transform: capitalize;
+    /*text-transform: capitalize;*/
     font-family: "Proxima Nova", sans-serif;
 }
 
@@ -310,4 +316,41 @@ pre code {
 
 .is-lesson:hover {
     background: var(--secondary-color-one, yellow);
+}
+
+.lesson-list-item .lesson-action {
+    display: none;
+}
+
+.lesson-list-item:hover .lesson-action {
+    display: block;
+}
+
+.content-block {
+    border: 2px dashed #d2cece;
+    width: 100%;
+}
+
+.is-slide-block {
+    border-left: 5px solid var(--tertiary-color-two, pink);
+    padding-left: 1rem;
+}
+
+.editor__code {
+    width: 100%;
+}
+
+.code__embed {
+    width: 100%;
+    height: 500px;
+}
+
+.code__embed-split {
+    width: 50%;
+}
+
+.content__controls-normal {
+    position: absolute;
+    right: 0;
+    top: 0;
 }

@@ -23,7 +23,7 @@ export const useTopics = () => {
             getAll: (_, event) => {
                 return topicsService.getAll(event.courseId).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const topics: Topic[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchTopicsSuccess(topics);
                     }),
@@ -40,7 +40,7 @@ export const useTopics = () => {
             findTopics: (_, event) => {
                 return topicsService.find(event.lessonId).pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const topics: Topic[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FindTopicsSuccess(topics)
                     }),

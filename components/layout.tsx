@@ -1,26 +1,12 @@
-import {useEffect, useRef} from 'react';
-import {initializeReveal} from '../lib/reveal.config';
-import {StripesBackground} from "./backgrounds/stripes-background";
+import React from 'react';
+import { withReveal } from './slides/withReveal';
 
-export default ({children}) => {
-    const slidesEl = useRef(null);
-
-    useEffect(() => {
-        // @ts-ignore
-        const hljs = window.hljs; // This is being injected from the plugin
-        slidesEl && initializeReveal();
-        if (hljs) {
-            document.querySelectorAll('pre code').forEach(hljs.highlightBlock);
-        }
-    });
-
+export const SlideLayout = ({children}) => {
     return (
         <>
-            <StripesBackground />
-            <div className="reveal">
-                <div className="wizeline-backgrounds"></div>
-                <div className="slides" ref={slidesEl}>{children}</div>
-            </div>
+            {children}
         </>
     );
 }
+
+export default withReveal(SlideLayout);

@@ -4,7 +4,7 @@ import {CoursesContext, CoursesStateSchema} from "./courses.machine.schema";
 import {
     CoursesMachineEvents,
     FetchCoursesFail,
-    FetchCoursesSuccess, FindCourseFail, FindCourseSuccess,
+    FetchCoursesSuccess, FetchUserCoursesFail, FetchUserCoursesSuccess, FindCourseFail, FindCourseSuccess,
     SaveCourseFail,
     SaveCourseSuccess
 } from "./courses.machine.events";
@@ -23,12 +23,22 @@ export const useCourses = () => {
             getAll: (_, event) => {
                 return coursesService.getAll().pipe(
                     take(1),
-                    map((snapshot) => {
+                    map((snapshot: firebase.database.DataSnapshot) => {
                         const courses: Course[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
                         return new FetchCoursesSuccess(courses);
                     }),
                     catchError(e => of(new FetchCoursesFail(e)))
                 );
+            },
+            getAllByUser: (_, event) => {
+                return coursesService.getAllFromUser(event.userId).pipe(
+                    take(1),
+                    map((snapshot: firebase.database.DataSnapshot) => {
+                        const courses: Course[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
+                        return new FetchUserCoursesSuccess(courses);
+                    }),
+                    catchError(e => of(new FetchUserCoursesFail(e)))
+            );
             },
             save: (_, event) => {
                 return coursesService.save(event.course).pipe(
@@ -38,7 +48,7 @@ export const useCourses = () => {
             },
             find: (_, event) => {
                 return coursesService.find(event.courseId).pipe(
-                    map((snapshot) => new FindCourseSuccess(snapshot.val())),
+                    map((snapshot: firebase.database.DataSnapshot) => new FindCourseSuccess(snapshot.val())),
                     catchError(e => of(new FindCourseFail(e)))
                 );
             }

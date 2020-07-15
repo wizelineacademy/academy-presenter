@@ -4,6 +4,7 @@ export interface CoursesStateSchema {
     states: {
         initial: {},
         fetching: {},
+        fetchingByUser: {},
         saving: {},
         saved: {},
         finding: {},
