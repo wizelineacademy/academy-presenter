@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, useRef, useState, useEffect } from "react";
 import { ModalOptions } from "../../domain/modal";
 import { Modal } from './Modal';
 import { Editor } from "@components/content";
@@ -7,8 +7,8 @@ import { TextArea } from "@components/TextArea/TextArea";
 import { BlockContent } from "@domain/content";
 
 export type ContentEditorModalProps = {
-    send?: any;
     block?: BlockContent;
+    onSave: (block: BlockContent) => void;
 }
 
 const modalTitle = {
@@ -17,15 +17,28 @@ const modalTitle = {
     'embed': 'Embed Content',
 }
 
-export const ContentEditorModal = forwardRef(({ send, block }: ContentEditorModalProps, ref) => {
+export const ContentEditorModal = forwardRef(({ onSave }: ContentEditorModalProps, ref) => {
+    const [block, setBlockToSave] = useState<BlockContent | null>(null);
     const title = modalTitle[block ? block.type : 'text'];
-    const markAsSlideBlock = (state: boolean) => { };
-    const markAsIsLastSlideBlock = (state: boolean) => { };
-    const updateCurrentBlockContent = (evt) => {};
-
     const modalRef = useRef();
 
+    const updateCurrentBlockContent = (content: string) => {
+        setBlockToSave({
+            ...block,
+            content
+        })
+    };
+
+    const markAsSlideBlock = (checked: boolean) => {
+        setBlockToSave({...block, isSlideBlock: checked});
+    }
+
+    const markAsIsLastSlideBlock = (checked: boolean) => {
+        setBlockToSave({...block, isLastSlideBlock: checked});
+    }
+
     const open = (opts: ModalOptions) => {
+        setBlockToSave({...opts.entity});
         modalRef.current.open(opts);
     }
 
@@ -65,7 +78,7 @@ export const ContentEditorModal = forwardRef(({ send, block }: ContentEditorModa
         if (block.type === 'text') {
             return (
                 <Editor
-                    onChange={(evt) => updateCurrentBlockContent(evt.target.value)}
+                    onChange={(content) => updateCurrentBlockContent(content)}
                     content={block.content}
                 />
             )
@@ -73,7 +86,7 @@ export const ContentEditorModal = forwardRef(({ send, block }: ContentEditorModa
     }
 
     return (
-        <Modal title={title} ref={modalRef} sizeLarge>
+        <Modal title={title} ref={modalRef} sizeLarge onConfirmAction={() => onSave(block)} >
             <div className="flex">
                 <div className="w-3/4">
                     {block && getEditor()}

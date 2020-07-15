@@ -63,8 +63,6 @@ export const LessonList = (props: LessonListProps) => {
     const deleteModalRef = useRef(null);
     const addTopicModalRef = useRef(null);
 
-    const byLesson = (topic: Topic) => topic.lessonId === selectedLesson.id;
-
     const isActive = (lesson: Lesson) => {
         return selectedLesson && lesson.id === selectedLesson.id;
     };
@@ -89,6 +87,7 @@ export const LessonList = (props: LessonListProps) => {
                 acc[lessonId].push(topic);
                 return acc;
             }, {});
+            console.log('topics', topicLessonsMap);
             setTopicLessonsDict(topicLessonsMap);
         }
     }
@@ -189,22 +188,25 @@ export const LessonList = (props: LessonListProps) => {
                                                                 <p className="text-gray-600">
                                                                     <h5 className="text-xl text-blue-500">Summary:</h5>
                                                                     {lesson.summary}
+                                                                    <button onClick={openTopicDialog}>Add topic bitch</button>
                                                                 </p>
                                                             )}
-                                                            <div key={topic.id} className="static">
-                                                                <h3 className="text-4xl">{topic.title}</h3>
-                                                                <h4 className="">{topic.description}</h4>
-                                                                <p className="text-gray-600">{topic.summary}</p>
-                                                                <br/>
-                                                                <ContentEditor
-                                                                    courseId={courseId}
-                                                                    lessonId={lesson.id}
-                                                                    topic={topic}
-                                                                    blocks={filteredBlocks(topic.id)}
-                                                                    sendContent={sendContent}
-                                                                    isAdmin={isAdmin}
-                                                                />
-                                                            </div>
+                                                            {topic.id && (
+                                                                <div key={topic.id} className="static">
+                                                                    <h3 className="text-4xl">{topic.title}</h3>
+                                                                    <h4 className="">{topic.description}</h4>
+                                                                    <p className="text-gray-600">{topic.summary}</p>
+                                                                    <br />
+                                                                    <ContentEditor
+                                                                        courseId={courseId}
+                                                                        lessonId={lesson.id}
+                                                                        topicId={topic.id}
+                                                                        blocks={filteredBlocks(topic.id)}
+                                                                        sendContent={sendContent}
+                                                                        isAdmin={isAdmin}
+                                                                    />
+                                                                </div>
+                                                            )}
                                                         </section>
                                                     </div>
                                                 )

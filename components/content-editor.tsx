@@ -26,45 +26,49 @@ const getDefaultBlockContent = (courseId: string, topicId): BlockContent & {edit
     topicId,
 })
 
-export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendContent, isAdmin}) => {
-    const [currentBlock, setCurrentBlock] = useState(getDefaultBlockContent(courseId as string, topic.id));
+export const ContentEditor = ({lessonId, courseId, topicId, blocks = [], sendContent, isAdmin}) => {
+    const [currentBlock, setCurrentBlock] = useState(getDefaultBlockContent(courseId as string, topicId));
     const content = [];
     const modalRef = useRef();
 
-    const saveOrUpdate = () => {
-        if (isNew(currentBlock)) {
+    const saveOrUpdate = (blockWithChanges) => {
+        if (isNew(blockWithChanges)) {
             // We create a new content
-            const {edit, ...content} = currentBlock;
             sendContent(new SaveContent({
-                ...content,
-                topicId: topic.id,
+                ...blockWithChanges,
                 courseId: courseId as string,
-                position: blocks.length
+                position: blocks.length,
+                topicId,
             }))
         } else {
             // Update an existing item
-            const {edit, ...content} = currentBlock;
-            sendContent(new UpdateContent(content))
+            sendContent(new UpdateContent(blockWithChanges));
         }
 
         cancelEditing();
     };
 
     const cancelEditing = () => {
-        setCurrentBlock(getDefaultBlockContent(courseId as string, topic.id));
+        setCurrentBlock(getDefaultBlockContent(courseId as string, topicId));
     }
 
     const changeToWrite = (block) => {
         setCurrentBlock(block);
-        modalRef.current.open();
+        modalRef.current.open({
+            type: block.type,
+            entity: currentBlock,
+            name: 'block'
+        });
     }
 
     const updateCurrentBlockType = (type) => {
-        setCurrentBlock({
-            ...currentBlock,
-            type,
+        const newBlock = { ...currentBlock, type };
+        setCurrentBlock(newBlock);
+        modalRef.current.open({
+            type: type,
+            entity: newBlock,
+            name: 'block'
         });
-        modalRef.current.open();
     }
 
     const updateCurrentBlockContent = (content) => {
@@ -196,7 +200,7 @@ export const ContentEditor = ({lessonId, courseId, topic, blocks = [], sendConte
     return (
         <div className="z-10 relative">
             {content}
-            <ContentEditorModal ref={modalRef} block={currentBlock} />
+            <ContentEditorModal ref={modalRef} onSave={saveOrUpdate} />
         </div>
     );
 }

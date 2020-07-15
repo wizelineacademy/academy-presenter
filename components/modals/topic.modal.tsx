@@ -66,7 +66,7 @@ export const TopicModal = forwardRef(({courseId, lessonId, sendTopic}: TopicModa
                 <form onSubmit={topicForm.handleSubmit}>
                     <TextField
                         label="Title *"
-                        name="name"
+                        name="title"
                         placeholder="e.g. First step to create awesome pages"
                         onChange={topicForm.handleChange}
                         onBlur={topicForm.handleBlur}
